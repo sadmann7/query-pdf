@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import Head from "next/head"
+import Router from "next/router"
 import { Message } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type SubmitHandler } from "react-hook-form"
@@ -45,6 +46,7 @@ export default function Home() {
   })
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data)
+    Router.push("/chats")
   }
 
   //  auto submit form when file is selected

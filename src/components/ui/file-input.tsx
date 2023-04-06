@@ -158,10 +158,10 @@ const FileInput = <TFieldValues extends FieldValues>({
       ) : (
         <div className="group grid place-items-center gap-1 sm:px-10">
           <UploadCloud
-            className="group-hover:animate-swing h-10 w-10 text-slate-900 dark:text-slate-400"
+            className="group-hover:animate-swing h-10 w-10 text-slate-700 dark:text-slate-400"
             aria-hidden="true"
           />
-          <p className="mt-2 text-base font-medium text-slate-900 dark:text-slate-400 sm:text-lg">
+          <p className="mt-2 text-base font-medium text-slate-700 dark:text-slate-400 sm:text-lg">
             Drag {`'n'`} drop file here, or click to select file
           </p>
           <p className="text-sm text-slate-500 sm:text-base">
@@ -178,7 +178,7 @@ export default FileInput
 
 const DragActive = ({ isDragActive }: { isDragActive: boolean }) => {
   return (
-    <div className="grid place-items-center gap-2 text-slate-800 dark:text-slate-400 sm:px-10">
+    <div className="grid place-items-center gap-2 text-slate-700 dark:text-slate-400 sm:px-10">
       <UploadCloud
         className={twMerge("h-10 w-10", isDragActive ? "animate-bounce" : "")}
         aria-hidden="true"

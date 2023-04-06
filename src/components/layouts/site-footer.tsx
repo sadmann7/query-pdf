@@ -1,7 +1,7 @@
 export function SiteFooter() {
   return (
     <footer className="w-full bg-white dark:bg-zinc-900">
-      <div className="container grid place-items-center space-y-2 border-t border-t-slate-500 py-3">
+      <div className="container grid place-items-center space-y-1 border-t border-t-slate-500 py-4">
         <div className="text-center text-sm text-slate-800 dark:text-slate-400 sm:text-base">
           Powered by{" "}
           <a
