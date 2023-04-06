@@ -7,14 +7,12 @@ interface SiteConfig {
   links: {
     twitter: string
     github: string
-    docs: string
   }
 }
 
 export const siteConfig: SiteConfig = {
-  name: "Next.js",
-  description:
-    "Beautifully designed components built with Radix UI and Tailwind CSS.",
+  name: "PaperChat",
+  description: "Chat with PDFs and other documents in real time.",
   mainNav: [
     {
       title: "Home",
@@ -22,8 +20,7 @@ export const siteConfig: SiteConfig = {
     },
   ],
   links: {
-    twitter: "https://twitter.com/shadcn",
-    github: "https://github.com/shadcn/ui",
-    docs: "https://ui.shadcn.com",
+    twitter: "https://twitter.com/sadmann17",
+    github: "https://github.com/sadmann7/paper-chat",
   },
 }
