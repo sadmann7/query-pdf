@@ -1,9 +1,9 @@
 "use client"
 
-import { useCallback, useEffect } from "react"
+import * as React from "react"
 import Image from "next/image"
 import type { SetState } from "@/types"
-import { Loader2, UploadCloud } from "lucide-react"
+import { UploadCloud } from "lucide-react"
 import {
   useDropzone,
   type Accept,
@@ -18,6 +18,8 @@ import type {
 } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { twMerge } from "tailwind-merge"
+
+import { Progress } from "@/components/ui/progress"
 
 interface FileInputProps<TFieldValues extends FieldValues>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -54,7 +56,7 @@ const FileInput = <TFieldValues extends FieldValues>({
   className,
   ...props
 }: FileInputProps<TFieldValues>) => {
-  const onDrop = useCallback(
+  const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       acceptedFiles.forEach((file) => {
         if (!file) return
@@ -100,8 +102,18 @@ const FileInput = <TFieldValues extends FieldValues>({
     maxFiles,
   })
 
+  // mock progress bar
+  const [progress, setProgress] = React.useState(0)
+  React.useEffect(() => {
+    if (!isUploading) return
+    const interval = setInterval(() => {
+      setProgress((prev) => (prev >= 100 ? 0 : prev + 1))
+    }, 400)
+    return () => clearInterval(interval)
+  }, [isUploading])
+
   // revoke object URL when component unmounts
-  useEffect(() => {
+  React.useEffect(() => {
     if (!selectedFile) return
     return () => URL.revokeObjectURL(selectedFile.name)
   }, [selectedFile])
@@ -119,7 +131,7 @@ const FileInput = <TFieldValues extends FieldValues>({
           ? "h-full border-none p-0"
           : "h-60",
         disabled
-          ? "pointer-events-none opacity-50"
+          ? "pointer-events-none opacity-80"
           : "pointer-events-auto opacity-100",
         className
       )}
@@ -127,7 +139,16 @@ const FileInput = <TFieldValues extends FieldValues>({
     >
       <input {...getInputProps()} />
       {isUploading ? (
-        <Loader2 className="h-16 w-16 animate-spin" />
+        <div className="group grid w-full place-items-center gap-1 sm:px-10">
+          <UploadCloud
+            className="h-10 w-10 animate-pulse text-slate-700 dark:text-slate-400"
+            aria-hidden="true"
+          />
+          <p className="line-clamp-2 text-sm text-slate-950 dark:text-slate-50">
+            {selectedFile ? selectedFile.name : "Uploading file..."}
+          </p>
+          <Progress className="mt-5 w-full" value={progress} />
+        </div>
       ) : selectedFile ? (
         previewType === "image" ? (
           <div className="group relative aspect-square h-full max-h-[420px] w-full overflow-hidden rounded-lg">
@@ -149,7 +170,7 @@ const FileInput = <TFieldValues extends FieldValues>({
             {isDragActive ? (
               <DragActive isDragActive={isDragActive} />
             ) : (
-              <p className="line-clamp-3 text-base font-medium text-slate-900 dark:text-slate-50 sm:text-lg">
+              <p className="line-clamp-3 text-base font-medium text-slate-950 dark:text-slate-50 sm:text-lg">
                 {selectedFile.name}
               </p>
             )}
@@ -160,7 +181,7 @@ const FileInput = <TFieldValues extends FieldValues>({
       ) : (
         <div className="group grid place-items-center gap-1 sm:px-10">
           <UploadCloud
-            className="group-hover:animate-swing h-10 w-10 text-slate-700 dark:text-slate-400"
+            className="h-10 w-10 text-slate-700 group-hover:animate-pulse dark:text-slate-400"
             aria-hidden="true"
           />
           <p className="mt-2 text-base font-medium text-slate-700 dark:text-slate-400 sm:text-lg">

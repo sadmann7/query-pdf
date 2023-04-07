@@ -9,3 +9,8 @@ export type Message = {
   isStreaming?: boolean
   sourceDocs?: Document[]
 }
+
+export type IngestResponse = {
+  message: string
+  chatId: string
+}

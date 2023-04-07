@@ -34,11 +34,9 @@ export default async function handler(
     pineconeIndexName: process.env.PINECONE_INDEX_NAME ?? "",
   })
 
-  /* create vectorstore*/
+  // Create vectorstore
   const vectorStore = await PineconeStore.fromExistingIndex(
-    new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPENAI_API_KEY ?? "",
-    }),
+    new OpenAIEmbeddings(),
     {
       pineconeIndex,
       textKey: "text",

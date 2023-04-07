@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import Head from "next/head"
-import { Message } from "@/types"
+import Router from "next/router"
+import { IngestResponse, Message } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { z } from "zod"
@@ -54,17 +55,15 @@ export default function Home() {
     setError(null)
 
     try {
-      const formData = new FormData()
-      formData.append("file", data.file)
       const response = await fetch("/api/ingest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: formData,
       })
-
-      // await Router.push("/chats")
+      const responseData = (await response.json()) satisfies IngestResponse
+      setIsLoading(false)
+      await Router.push(`/chats/${responseData.chatId}`)
     } catch (error) {
       setError(error.message)
       setIsLoading(false)
@@ -110,6 +109,7 @@ export default function Home() {
               accept={{
                 ["application/pdf"]: [".pdf"],
               }}
+              isUploading={isLoading}
               disabled={isLoading}
             />
             {formState.errors.file?.message && (
