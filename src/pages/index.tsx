@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import Head from "next/head"
 import Router from "next/router"
-import { IngestResponse, Message } from "@/types"
+import { IngestResponse } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { z } from "zod"
@@ -17,28 +17,8 @@ type Inputs = z.infer<typeof schema>
 
 export default function Home() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [query, setQuery] = useState<string>("")
-  const [loading, setLoading] = useState<boolean>(false)
-  const [sourceDoc, setSourceDoc] = useState<Document[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [messageState, setMessageState] = useState<{
-    messages: Message[]
-    pending?: string
-    history: [string, string][]
-    pendingSourceDocs?: Document[]
-  }>({
-    messages: [
-      {
-        message: "Hi, what would you like to learn about this PDF?",
-        type: "apiMessage",
-      },
-    ],
-    history: [],
-    pendingSourceDocs: [],
-  })
-
-  const { messages, pending, history, pendingSourceDocs } = messageState
 
   // react-hook-form
   const { handleSubmit, formState, setValue, watch, reset } = useForm<Inputs>({
@@ -83,7 +63,7 @@ export default function Home() {
         <title>Chat with PDF</title>
       </Head>
       <section className="container grid items-center gap-14 pb-8 pt-6 md:py-10">
-        <div className="mx-auto grid max-w-[980px] place-items-center gap-5">
+        <div className="mx-auto grid w-full max-w-[980px] place-items-center gap-5">
           <h1 className="text-center text-3xl font-bold leading-tight tracking-normal sm:text-3xl md:text-5xl lg:text-6xl">
             Chat with your PDF in real time
           </h1>
