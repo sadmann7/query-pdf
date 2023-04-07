@@ -15,10 +15,6 @@ export const siteConfig: SiteConfig = {
   description: "Chat with PDFs and other documents in real time.",
   mainNav: [
     {
-      title: "Home",
-      href: "/",
-    },
-    {
       title: "Chats",
       href: "/chats",
     },

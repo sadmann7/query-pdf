@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react"
 import Head from "next/head"
 import Router from "next/router"
+import { NextPageWithLayout } from "@/pages/_app"
 import { IngestResponse } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { z } from "zod"
 
+import { Layout } from "@/components/layouts/layout"
 import FileInput from "@/components/ui/form/file-input"
 
 const schema = z.object({
@@ -15,7 +17,7 @@ const schema = z.object({
 })
 type Inputs = z.infer<typeof schema>
 
-export default function Home() {
+const Home: NextPageWithLayout = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -103,3 +105,7 @@ export default function Home() {
     </>
   )
 }
+
+export default Home
+
+Home.getLayout = (page) => <Layout>{page}</Layout>

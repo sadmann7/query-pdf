@@ -9,6 +9,7 @@ import { z } from "zod"
 
 import { Message } from "@/types/"
 import { cn } from "@/lib/utils"
+import { ChatLayout } from "@/components/layouts/chat-layout"
 import { Layout } from "@/components/layouts/layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -74,11 +75,14 @@ const Chat: NextPageWithLayout = () => {
         <title>Chat | Chat with PDF</title>
       </Head>
       <section className="container grid items-center gap-14 pb-8 pt-6 md:pb-16 md:pt-8">
-        <div className="mx-auto w-full max-w-[980px]">
-          <h1 className="text-center text-base font-bold leading-tight tracking-normal sm:text-lg md:text-xl lg:text-2xl">
-            Chat with your PDF
-          </h1>
-          <div className="mx-auto mt-10 w-full max-w-3xl">
+        <div className="relative mx-auto w-full max-w-[980px]">
+          <div className=" top-24">
+            <div className="flex items-center gap-2 overflow-x-auto"></div>
+            <h1 className="text-center text-base font-bold leading-tight tracking-normal sm:text-lg md:text-xl lg:text-2xl">
+              Chat with your PDF
+            </h1>
+          </div>
+          <div className="mx-auto mt-5 w-full max-w-3xl">
             <div
               ref={chatRef}
               className="my-5 flex h-[480px] w-full flex-col gap-2 overflow-y-auto"
@@ -163,4 +167,4 @@ const Chat: NextPageWithLayout = () => {
 
 export default Chat
 
-Chat.getLayout = (page) => <Layout>{page}</Layout>
+Chat.getLayout = (page) => <ChatLayout>{page}</ChatLayout>
