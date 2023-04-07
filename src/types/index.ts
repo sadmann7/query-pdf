@@ -7,5 +7,5 @@ export type Message = {
   type: "apiMessage" | "userMessage"
   message: string
   isStreaming?: boolean
-  sourceDoc?: Document
+  sourceDocs?: Document[]
 }

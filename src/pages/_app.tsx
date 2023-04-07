@@ -3,7 +3,7 @@ import { Inter as FontSans } from "@next/font/google"
 import { ThemeProvider } from "next-themes"
 
 import { Layout } from "@/components/layouts/layout"
-import ToastWrapper from "@/components/toast-wrapper"
+import ToastWrapper from "@/components/ui/toast-wrapper"
 import "@/styles/globals.css"
 import type { ReactElement, ReactNode } from "react"
 import type { NextPage } from "next"

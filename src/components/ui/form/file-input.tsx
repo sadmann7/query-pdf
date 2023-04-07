@@ -1,3 +1,5 @@
+"use client"
+
 import { useCallback, useEffect } from "react"
 import Image from "next/image"
 import type { SetState } from "@/types"
@@ -108,7 +110,7 @@ const FileInput = <TFieldValues extends FieldValues>({
     <div
       {...getRootProps()}
       className={twMerge(
-        "group relative grid h-60 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition hover:bg-slate-400/25 dark:hover:bg-slate-700/25 ",
+        "group relative grid h-60 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition hover:bg-slate-200/25 dark:hover:bg-slate-700/25 ",
         "focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900",
         isDragActive
           ? "border-slate-900 dark:border-slate-400"
