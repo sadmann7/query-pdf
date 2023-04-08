@@ -15,7 +15,7 @@ export function ChatLayout({ children }: LayoutProps) {
       <Meta />
       <div className="flex h-full w-full overflow-hidden">
         <main className="flex h-screen max-w-full flex-1 flex-col">
-          <SiteHeader items={chatConfig.sidebarNav} />
+          <SiteHeader config={chatConfig} />
           <div className="relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden md:grid md:grid-cols-[220px_minmax(0,1fr)] md:items-start lg:grid-cols-[240px_minmax(0,1fr)]">
             <div className="container hidden h-full w-full shrink-0 overflow-y-auto md:block md:pt-7 lg:pt-0">
               <aside className="fixed top-0 z-30 h-full w-full border-r border-r-slate-100 dark:border-r-slate-700 md:sticky">

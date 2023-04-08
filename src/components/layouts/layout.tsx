@@ -12,7 +12,7 @@ export function Layout({ children }: LayoutProps) {
     <>
       <Meta />
       <div className="flex min-h-screen flex-col">
-        <SiteHeader items={siteConfig.mainNav} />
+        <SiteHeader config={siteConfig} />
         <main className="flex-1">{children}</main>
         <SiteFooter />
       </div>

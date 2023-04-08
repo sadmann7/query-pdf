@@ -1,10 +1,10 @@
-import { NavItem } from "@/types/nav"
+import type { NavItem } from "@/types/nav"
 
 interface SiteConfig {
-  name: string
-  description: string
+  name?: string
+  description?: string
   mainNav: NavItem[]
-  links: {
+  links?: {
     twitter: string
     github: string
   }

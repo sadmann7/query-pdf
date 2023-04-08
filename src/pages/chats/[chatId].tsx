@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react"
 import Head from "next/head"
 import { NextPageWithLayout } from "@/pages/_app"
+import type { Message } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Document } from "langchain/document"
 import { Send, X } from "lucide-react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { z } from "zod"
 
-import { Message } from "@/types/"
 import { cn } from "@/lib/utils"
 import { ChatLayout } from "@/components/layouts/chat-layout"
 import { Button } from "@/components/ui/button"
@@ -62,7 +62,7 @@ const Chat: NextPageWithLayout = () => {
     reset()
   }
 
-  // Scroll to bottom of chat
+  // scroll to bottom of chat
   const chatRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!chatRef.current) return

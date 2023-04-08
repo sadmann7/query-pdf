@@ -1,10 +1,12 @@
-import { SidebarNavItem } from "@/types/nav"
+import type { Config } from "@/types"
 
-interface ChatConfig {
-  sidebarNav: SidebarNavItem[]
-}
-
-export const chatConfig: ChatConfig = {
+export const chatConfig: Config = {
+  mainNav: [
+    {
+      title: "Chats",
+      href: "/chats",
+    },
+  ],
   sidebarNav: [
     {
       title: "New Chat",

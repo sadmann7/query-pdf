@@ -1,6 +1,6 @@
 import Link from "next/link"
+import { Config } from "@/types"
 
-import { NavItem } from "@/types/nav"
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 interface MainNavProps {
-  items?: NavItem[]
+  config: Config
 }
 
-export function MainNav({ items }: MainNavProps) {
+export function MainNav({ config }: MainNavProps) {
   return (
     <div className="flex gap-6">
       <Link href="/" className="hidden items-center space-x-2 md:flex">
@@ -27,9 +27,9 @@ export function MainNav({ items }: MainNavProps) {
           {siteConfig.name}
         </span>
       </Link>
-      {items?.length ? (
+      {config.mainNav?.length ? (
         <nav className="hidden gap-6 md:flex">
-          {items?.map(
+          {config.mainNav?.map(
             (item, index) =>
               item.href && (
                 <Link
@@ -67,7 +67,7 @@ export function MainNav({ items }: MainNavProps) {
             </Link>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {items?.map((item, index) =>
+          {(config.sidebarNav ?? config.mainNav)?.map((item, index) =>
             item.href ? (
               <DropdownMenuItem
                 key={index}
