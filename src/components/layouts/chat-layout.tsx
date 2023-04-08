@@ -15,13 +15,15 @@ export function ChatLayout({ children }: LayoutProps) {
       <Meta />
       <div className="flex h-full w-full overflow-hidden">
         <main className="flex h-screen max-w-full flex-1 flex-col">
-          <SiteHeader />
-          <div className="relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden md:grid md:grid-cols-[220px_minmax(0,1fr)] md:items-start md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
-            <aside className="w-50 fixed left-2.5 z-30 hidden h-full w-52 shrink-0 overflow-y-auto border-r border-r-slate-100 dark:border-r-slate-700 md:sticky md:block">
-              <ScrollArea className="h-full pr-6 lg:py-7">
-                <SidebarNav items={chatConfig.sidebarNav} />
-              </ScrollArea>
-            </aside>
+          <SiteHeader items={chatConfig.sidebarNav} />
+          <div className="relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden md:grid md:grid-cols-[220px_minmax(0,1fr)] md:items-start lg:grid-cols-[240px_minmax(0,1fr)]">
+            <div className="container hidden h-full w-full shrink-0 overflow-y-auto md:block md:pt-7 lg:pt-0">
+              <aside className="fixed top-0 z-30 h-full w-full border-r border-r-slate-100 dark:border-r-slate-700 md:sticky">
+                <ScrollArea className="h-full pr-6 lg:py-7">
+                  <SidebarNav items={chatConfig.sidebarNav} />
+                </ScrollArea>
+              </aside>
+            </div>
             {children}
           </div>
           <SiteFooter />

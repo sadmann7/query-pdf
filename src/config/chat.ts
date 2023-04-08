@@ -7,8 +7,9 @@ interface ChatConfig {
 export const chatConfig: ChatConfig = {
   sidebarNav: [
     {
-      title: "Add",
+      title: "New Chat",
       icon: "plus",
+      href: "/",
     },
     {
       title: "Chat 1",
@@ -51,43 +52,43 @@ export const chatConfig: ChatConfig = {
       icon: "message",
     },
     {
-      title: "Chat 1",
+      title: "Chat 11",
       icon: "message",
     },
     {
-      title: "Chat 2",
+      title: "Chat 12",
       icon: "message",
     },
     {
-      title: "Chat 3",
+      title: "Chat 13",
       icon: "message",
     },
     {
-      title: "Chat 4",
+      title: "Chat 14",
       icon: "message",
     },
     {
-      title: "Chat 5",
+      title: "Chat 15",
       icon: "message",
     },
     {
-      title: "Chat 6",
+      title: "Chat 16",
       icon: "message",
     },
     {
-      title: "Chat 7",
+      title: "Chat 17",
       icon: "message",
     },
     {
-      title: "Chat 8",
+      title: "Chat 18",
       icon: "message",
     },
     {
-      title: "Chat 9",
+      title: "Chat 19",
       icon: "message",
     },
     {
-      title: "Chat 10",
+      title: "Chat 20",
       icon: "message",
     },
   ],

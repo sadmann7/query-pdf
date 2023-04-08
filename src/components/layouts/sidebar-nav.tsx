@@ -24,7 +24,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
                 <Link
                   href={item.href}
                   className={cn(
-                    "group flex w-full items-center rounded-md px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800",
+                    "group flex w-full items-center gap-2.5 rounded-md px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800",
                     {
                       "bg-slate-100 dark:bg-slate-800": pathname === item.href,
                     }
@@ -32,6 +32,9 @@ export function SidebarNav({ items }: SidebarNavProps) {
                   target={item.external ? "_blank" : ""}
                   rel={item.external ? "noreferrer" : ""}
                 >
+                  {item.icon && (
+                    <Icons.plus className="h-5 w-5 text-slate-600 dark:text-slate-200" />
+                  )}
                   {item.title}
                   {item.label && (
                     <span className="ml-2 rounded-md bg-teal-100 px-1.5 py-0.5 text-xs no-underline group-hover:no-underline dark:text-slate-900">
@@ -40,7 +43,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
                   )}
                 </Link>
               ) : (
-                <span className="flex w-full cursor-pointer items-center gap-3 rounded-md px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                <span className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                   {item.icon && (
                     <Icons.message className="h-5 w-5 text-slate-600 dark:text-slate-200" />
                   )}

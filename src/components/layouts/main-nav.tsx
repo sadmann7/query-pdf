@@ -1,4 +1,3 @@
-import * as React from "react"
 import Link from "next/link"
 
 import { NavItem } from "@/types/nav"
@@ -60,7 +59,7 @@ export function MainNav({ items }: MainNavProps) {
         <DropdownMenuContent
           align="start"
           sideOffset={24}
-          className="w-[300px] overflow-scroll"
+          className="max-h-[calc(100vh-10rem)] w-60 overflow-y-auto"
         >
           <DropdownMenuLabel>
             <Link href="/" className="flex items-center">
@@ -68,13 +67,31 @@ export function MainNav({ items }: MainNavProps) {
             </Link>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {items?.map(
-            (item, index) =>
-              item.href && (
-                <DropdownMenuItem key={index} asChild>
-                  <Link href={item.href}>{item.title}</Link>
-                </DropdownMenuItem>
-              )
+          {items?.map((item, index) =>
+            item.href ? (
+              <DropdownMenuItem
+                key={index}
+                asChild
+                className="flex items-center gap-2.5"
+              >
+                <Link href={item.href}>
+                  {item.icon && (
+                    <Icons.plus className="h-4 w-4" aria-hidden="true" />
+                  )}
+                  <span className="line-clamp-1">{item.title}</span>
+                </Link>
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem
+                key={index}
+                className="flex items-center gap-2.5"
+              >
+                {item.icon && (
+                  <Icons.message className="h-4 w-4" aria-hidden="true" />
+                )}
+                <span className="line-clamp-1">{item.title}</span>
+              </DropdownMenuItem>
+            )
           )}
         </DropdownMenuContent>
       </DropdownMenu>

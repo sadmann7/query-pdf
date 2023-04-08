@@ -1,3 +1,4 @@
+import { siteConfig } from "@/config/site"
 import Meta from "@/components/layouts/meta"
 import { SiteFooter } from "@/components/layouts/site-footer"
 import { SiteHeader } from "@/components/layouts/site-header"
@@ -11,7 +12,7 @@ export function Layout({ children }: LayoutProps) {
     <>
       <Meta />
       <div className="flex min-h-screen flex-col">
-        <SiteHeader />
+        <SiteHeader items={siteConfig.mainNav} />
         <main className="flex-1">{children}</main>
         <SiteFooter />
       </div>

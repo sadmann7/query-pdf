@@ -75,7 +75,7 @@ const Chat: NextPageWithLayout = () => {
         <title>Chat | Chat with PDF</title>
       </Head>
       <ScrollArea className="h-full">
-        <div className="container h-full w-full max-w-3xl flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="container h-full w-full max-w-4xl flex-1 overflow-y-auto overflow-x-hidden">
           <h1 className="absolute left-1/2 top-0 w-full -translate-x-1/2 bg-white py-5 text-center text-base font-bold leading-tight tracking-normal dark:bg-zinc-900 sm:text-lg md:text-xl lg:text-2xl">
             Chat with your PDF
           </h1>
@@ -108,7 +108,7 @@ const Chat: NextPageWithLayout = () => {
         </div>
         <div className="absolute bottom-0 left-0 mt-2.5 w-full bg-white dark:bg-zinc-900">
           <form
-            className="container mx-auto mb-5 flex max-w-3xl flex-row gap-3"
+            className="container mx-auto mb-5 flex max-w-4xl flex-row gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
             <fieldset className="relative flex w-full flex-col gap-2.5">
