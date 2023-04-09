@@ -13,10 +13,17 @@ export interface Config {
 }
 
 export type Message = {
-  type: "apiMessage" | "userMessage"
+  type: "bot" | "user"
   message: string
   isStreaming?: boolean
   sourceDocs?: Document[]
+}
+
+export type MessageState = {
+  messages: Message[]
+  pending?: string
+  history: [string, string][]
+  pendingSourceDocs?: Document[]
 }
 
 export type IngestResponse = {

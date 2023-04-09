@@ -1,16 +1,21 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Head from "next/head"
 import { NextPageWithLayout } from "@/pages/_app"
-import type { Message } from "@/types"
+import type { Message, MessageState } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { Document } from "langchain/document"
 import { Send, X } from "lucide-react"
 import { useForm, type SubmitHandler } from "react-hook-form"
+import { toast } from "react-hot-toast"
+import { ReactMarkdown } from "react-markdown/lib/react-markdown"
 import { z } from "zod"
 
 import { cn } from "@/lib/utils"
 import { ChatLayout } from "@/components/layouts/chat-layout"
+import Soruces from "@/components/sources"
 import { Button } from "@/components/ui/button"
+import LoadingDots from "@/components/ui/loading-dots"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 
@@ -20,19 +25,12 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>
 
 const Chat: NextPageWithLayout = () => {
-  const [sourceDocs, setSourceDocs] = useState<Document[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [messageState, setMessageState] = useState<{
-    messages: Message[]
-    pending?: string
-    history: [string, string][]
-    pendingSourceDocs?: Document[]
-  }>({
+  const [messageState, setMessageState] = useState<MessageState>({
     messages: [
       {
         message: "Hi, what would you like to learn about this PDF?",
-        type: "apiMessage",
+        type: "bot",
       },
     ],
     history: [],
@@ -48,26 +46,103 @@ const Chat: NextPageWithLayout = () => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data)
 
-    setMessageState({
-      ...messageState,
+    const question = data.query.trim()
+    setIsLoading(true)
+    reset()
+
+    setMessageState((state) => ({
+      ...state,
       messages: [
-        ...messages,
+        ...state.messages,
         {
-          message: data.query,
-          type: "userMessage",
+          type: "user",
+          message: question,
         },
       ],
-      pending: data.query,
-    })
-    reset()
+      pending: undefined,
+    }))
+
+    setMessageState((state) => ({ ...state, pending: "loading..." }))
+
+    const ctrl = new AbortController()
+
+    try {
+      fetchEventSource("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question,
+          history,
+        }),
+        signal: ctrl.signal,
+        onmessage: (event) => {
+          if (event.data === "[DONE]") {
+            setMessageState((state) => ({
+              history: [...state.history, [question, state.pending ?? ""]],
+              messages: [
+                ...state.messages,
+                {
+                  type: "bot",
+                  message: state.pending.replace("loading...", "") ?? "",
+                  sourceDocs: state.pendingSourceDocs,
+                },
+              ],
+              pending: undefined,
+              pendingSourceDocs: undefined,
+            }))
+            setIsLoading(false)
+            ctrl.abort()
+          } else {
+            const data = JSON.parse(event.data)
+            if (data.sourceDocs) {
+              setMessageState((state) => ({
+                ...state,
+                pendingSourceDocs: data.sourceDocs,
+              }))
+            } else {
+              setMessageState((state) => ({
+                ...state,
+                pending: (state.pending ?? "") + data.data,
+              }))
+            }
+          }
+        },
+      })
+    } catch (error: unknown) {
+      error instanceof Error
+        ? toast.error(error.message)
+        : toast.error("Something went wrong, please try again")
+    }
   }
 
+  // memoize the messages if pending is not undefined
+  const memoedMessages = useMemo(() => {
+    if (pending) {
+      return [
+        ...messages,
+        { type: "bot", message: pending, sourceDocs: pendingSourceDocs },
+      ]
+    }
+    return messages
+  }, [messages, pending, pendingSourceDocs]) satisfies Message[]
+
   // scroll to bottom of chat
-  const chatRef = useRef<HTMLDivElement>(null)
+  const endMessageRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (!chatRef.current) return
-    chatRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+    if (!endMessageRef.current) return
+    endMessageRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest",
+    })
   }, [messages])
+
+  console.log({
+    isLoading,
+    memoedMessages,
+  })
 
   return (
     <>
@@ -80,30 +155,38 @@ const Chat: NextPageWithLayout = () => {
             Chat with your PDF
           </h1>
           <div className="mb-24 mt-20">
-            {messages.map((message, i) =>
-              message.type === "apiMessage" ? (
+            {memoedMessages.map((message, i) =>
+              message.type === "bot" ? (
                 <div
                   key={i}
-                  className="mb-2 w-fit rounded-md border border-slate-300 bg-zinc-200/25 px-2.5 py-1.5 text-sm text-slate-950 dark:border-slate-500 dark:bg-zinc-700/75 dark:text-slate-50"
+                  className="my-4 w-fit rounded-md border border-slate-300 bg-zinc-200/25 px-2.5 py-1.5 text-sm text-slate-950 dark:border-slate-500 dark:bg-zinc-700/75 dark:text-slate-50"
                 >
-                  {message.message}
+                  {isLoading && i === memoedMessages.length - 1 ? (
+                    <LoadingDots color="#64748b" />
+                  ) : (
+                    <ReactMarkdown linkTarget="_blank">
+                      {message.message}
+                    </ReactMarkdown>
+                  )}
+                  {!isLoading && message.sourceDocs && (
+                    <Soruces sources={message.sourceDocs} i={i} />
+                  )}
                 </div>
               ) : (
-                <div
-                  key={i}
-                  className="mt-1.5 flex items-center justify-end gap-2.5"
-                >
+                <div key={i} className="flex items-center justify-end gap-2.5">
                   <div className="flex flex-col items-end gap-1.5">
                     <div className="flex items-center gap-2.5">
                       <div className="rounded-md border border-slate-300 bg-blue-500 px-2.5 py-1.5 text-sm text-slate-50 dark:border-slate-500 dark:bg-blue-600">
-                        {message.message}
+                        <ReactMarkdown linkTarget="_blank">
+                          {message.message}
+                        </ReactMarkdown>
                       </div>
                     </div>
                   </div>
                 </div>
               )
             )}
-            <div ref={chatRef} />
+            <div ref={endMessageRef} />
           </div>
         </div>
         <div className="absolute bottom-0 left-0 mt-2.5 w-full bg-white dark:bg-zinc-900">
@@ -113,9 +196,8 @@ const Chat: NextPageWithLayout = () => {
           >
             <fieldset className="relative flex w-full flex-col gap-2.5">
               <label htmlFor="query" className="sr-only">
-                Type your question here
+                Type your question
               </label>
-
               <Textarea
                 id="query"
                 name="query"
@@ -142,17 +224,14 @@ const Chat: NextPageWithLayout = () => {
                     <Button
                       type="button"
                       aria-label="Clear query"
+                      size="sm"
                       variant="ghost"
-                      className="h-auto rounded-full p-0"
+                      className="h-auto rounded-full p-0 text-slate-600 dark:text-slate-400"
                       onClick={() => {
                         reset()
                       }}
                     >
-                      <X
-                        className="h-4 w-4 text-slate-700 dark:text-slate-400"
-                        aria-hidden="true"
-                      />
-                      <span className="sr-only">Clear query</span>
+                      <X className="h-4 w-4" aria-hidden="true" />
                     </Button>
                     <span className="h-5 w-px bg-slate-400 dark:bg-slate-600" />
                   </>
@@ -160,14 +239,10 @@ const Chat: NextPageWithLayout = () => {
                 <Button
                   aria-label="Chat"
                   variant="ghost"
-                  className="h-auto rounded-full p-0.5"
+                  className="h-auto rounded-full p-0.5 text-slate-500 dark:text-slate-500"
                   disabled={isLoading}
                 >
-                  <Send
-                    className="h-5 w-5 text-slate-600 dark:text-slate-500"
-                    aria-hidden="true"
-                  />
-                  <span className="sr-only">Chat</span>
+                  <Send className="h-5 w-5" aria-hidden="true" />
                 </Button>
               </div>
             </fieldset>
