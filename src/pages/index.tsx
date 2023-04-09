@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from "react"
 import Head from "next/head"
 import Router from "next/router"
 import type { NextPageWithLayout } from "@/pages/_app"
+import { useChatStore } from "@/stores/chat"
 import type { IngestResponse } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { nanoid } from "nanoid"
 import { useForm, type SubmitHandler } from "react-hook-form"
+import { toast } from "react-hot-toast"
 import { z } from "zod"
 
 import { Layout } from "@/components/layouts/layout"
@@ -21,22 +23,27 @@ type Inputs = z.infer<typeof schema>
 const Home: NextPageWithLayout = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+
+  // chat store
+  const chatStore = useChatStore((state) => ({
+    chats: state.chats,
+    addChat: state.addChat,
+    editChat: state.editChat,
+    removeChat: state.removeChat,
+  }))
 
   // react-hook-form
-  const { handleSubmit, formState, setValue, watch, reset } = useForm<Inputs>({
+  const { handleSubmit, formState, setValue } = useForm<Inputs>({
     resolver: zodResolver(schema),
   })
   const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
     console.log(data)
 
     if (!(data.file instanceof File)) {
-      setError("Must be a file")
+      toast.error("Upload a PDF file")
       return
     }
     setIsLoading(true)
-    setError(null)
-    window.localStorage.setItem("fileName", data.file.name)
 
     try {
       const response = await fetch("/api/ingest", {
@@ -49,19 +56,16 @@ const Home: NextPageWithLayout = () => {
         }),
       })
       const responseData = (await response.json()) as IngestResponse
+      chatStore.addChat(responseData.chatId, data.file.name, [])
       setIsLoading(false)
       await Router.push(`/chats/${responseData.chatId}`)
-    } catch (error) {
-      setError(error.message)
+    } catch (error: unknown) {
+      error instanceof Error
+        ? toast.error(error.message)
+        : toast.error("Something went wrong, please try again")
       setIsLoading(false)
     }
   }, [])
-
-  useEffect(() => {
-    if (selectedFile) {
-      document.cookie = `selectedFile=${selectedFile.name}`
-    }
-  }, [selectedFile])
 
   //  auto submit form when file is selected
   useEffect(() => {

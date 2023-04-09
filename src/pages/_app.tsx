@@ -1,12 +1,13 @@
 import type { AppProps } from "next/app"
-import { Inter as FontSans } from "@next/font/google"
+import { Inter as FontSans } from "next/font/google"
 import { ThemeProvider } from "next-themes"
 
 import { Layout } from "@/components/layouts/layout"
 import ToastWrapper from "@/components/ui/toast-wrapper"
 import "@/styles/globals.css"
-import type { ReactElement, ReactNode } from "react"
+import { ReactElement, type ReactNode } from "react"
 import type { NextPage } from "next"
+import Head from "next/head"
 
 export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
   P,
@@ -36,6 +37,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         }
       `}</style>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <Head>
+          <title>Chat with PDF</title>
+        </Head>
         {getLayout(<Component {...pageProps} />)}
         <ToastWrapper />
       </ThemeProvider>

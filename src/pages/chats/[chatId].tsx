@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { NextPageWithLayout } from "@/pages/_app"
@@ -7,7 +7,6 @@ import type { Message, MessageState } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { Send, X } from "lucide-react"
-import { nanoid } from "nanoid"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { ReactMarkdown } from "react-markdown/lib/react-markdown"
@@ -30,6 +29,7 @@ const Chat: NextPageWithLayout = () => {
   const router = useRouter()
   const { chatId } = router.query as { chatId: string }
 
+  // chat store
   const chatStore = useChatStore((state) => ({
     chats: state.chats,
     addChat: state.addChat,
@@ -105,6 +105,7 @@ const Chat: NextPageWithLayout = () => {
               pending: undefined,
               pendingSourceDocs: undefined,
             }))
+
             setIsLoading(false)
             ctrl.abort()
           } else {
@@ -128,6 +129,7 @@ const Chat: NextPageWithLayout = () => {
         ? toast.error(error.message)
         : toast.error("Something went wrong, please try again")
     }
+    setIsLoading(false)
   }
 
   // memoize the messages if pending is not undefined
@@ -147,6 +149,7 @@ const Chat: NextPageWithLayout = () => {
 
   // scroll to bottom of chat
   const endMessageRef = useRef<HTMLDivElement>(null)
+  const chatRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!endMessageRef.current) return
     endMessageRef.current?.scrollIntoView({
@@ -154,19 +157,7 @@ const Chat: NextPageWithLayout = () => {
       block: "start",
       inline: "nearest",
     })
-  }, [messages])
-
-  console.log({
-    isLoading,
-    memoedMessages,
-  })
-
-  // add chat to store
-  useEffect(() => {
-    if (!chatId) return
-    if (chatStore.chats.find((c) => c.chatId === chatId)) return
-    chatStore.addChat(chatId, chatId, memoedMessages)
-  }, [chatId, chatStore, memoedMessages])
+  }, [memoedMessages])
 
   return (
     <>
@@ -176,9 +167,11 @@ const Chat: NextPageWithLayout = () => {
       <ScrollArea className="h-full">
         <div className="container h-full w-full max-w-4xl flex-1 overflow-y-auto overflow-x-hidden">
           <div className="absolute left-1/2 top-0 w-full -translate-x-1/2 bg-white py-5 text-center text-base font-bold leading-tight tracking-normal dark:bg-zinc-900 sm:text-lg md:text-xl lg:text-2xl">
-            <h1 className="line-clamp-1">Chat with {"your PDF"}</h1>
+            <h1 className="line-clamp-1">
+              Chat with {chatStore.chats[0]?.chatName ?? "your PDF"}
+            </h1>
           </div>
-          <div className="mb-24 mt-20">
+          <div ref={chatRef} className="mb-24 mt-20">
             {memoedMessages.map((message, i) =>
               message.type === "bot" ? (
                 <div

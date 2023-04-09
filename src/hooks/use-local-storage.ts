@@ -1,11 +1,11 @@
-import { useState } from "react"
+import * as React from "react"
 import type { SetState } from "@/types"
 
 const useLocalStorage = <T extends unknown>(
   key: string,
   initialValue: T
 ): [T, SetState<T>] => {
-  const [storedValue, setStoredValue] = useState<T>(() => {
+  const [storedValue, setStoredValue] = React.useState<T>(() => {
     try {
       const item = window.localStorage.getItem(key)
       return item ? JSON.parse(item) : initialValue
