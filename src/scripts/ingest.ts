@@ -40,15 +40,14 @@ export const run = async () => {
     //embed the PDF documents
     await PineconeStore.fromDocuments(docs, embeddings, {
       pineconeIndex,
-      namespace: process.env.PINECONE_NAMESPACE ?? "",
       textKey: "text",
+      namespace: process.env.PINECONE_NAMESPACE ?? "",
     })
   } catch (error) {
     console.log("error", error)
     throw new Error("Failed to ingest your data")
   }
 }
-
 ;(async () => {
   await run()
   console.log("ingestion complete")

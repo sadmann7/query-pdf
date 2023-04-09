@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next"
+import type { IngestResponse } from "@/types"
 import { DirectoryLoader } from "langchain/document_loaders"
 import { OpenAIEmbeddings } from "langchain/embeddings"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
@@ -10,7 +11,7 @@ import { createPineconeIndex } from "@/lib/pinecone"
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
-    file: string
+    fileName: string
   }
 }
 
@@ -19,9 +20,11 @@ const filePath = "src/docs"
 
 export default async function handler(
   req: ExtendedNextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<IngestResponse>
 ) {
   try {
+    const { fileName } = req.body
+
     // Load raw docs from the all files in the directory
     const directoryLoader = new DirectoryLoader(filePath, {
       ".pdf": (path) => new CustomPDFLoader(path),
@@ -52,8 +55,8 @@ export default async function handler(
     // Embed the PDF documents
     await PineconeStore.fromDocuments(docs, embeddings, {
       pineconeIndex,
-      namespace: process.env.PINECONE_NAMESPACE ?? "",
       textKey: "text",
+      namespace: nanoid(),
     })
 
     res.status(200).json({

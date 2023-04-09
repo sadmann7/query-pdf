@@ -7,6 +7,7 @@ import { createPineconeIndex } from "@/lib/pinecone"
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
+    chatId: string
     question: string
     chatHistory: string[]
   }
@@ -16,8 +17,9 @@ export default async function handler(
   req: ExtendedNextApiRequest,
   res: NextApiResponse
 ) {
-  const { question, chatHistory } = req.body
+  const { chatId, question, chatHistory } = req.body
   console.log({
+    chatId,
     question,
     chatHistory,
   })
@@ -40,7 +42,7 @@ export default async function handler(
     {
       pineconeIndex,
       textKey: "text",
-      namespace: process.env.PINECONE_NAMESPACE ?? "",
+      namespace: chatId,
     }
   )
 

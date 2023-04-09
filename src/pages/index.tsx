@@ -35,6 +35,7 @@ const Home: NextPageWithLayout = () => {
     }
     setIsLoading(true)
     setError(null)
+    window.localStorage.setItem("fileName", data.file.name)
 
     try {
       const response = await fetch("/api/ingest", {
@@ -42,8 +43,11 @@ const Home: NextPageWithLayout = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          fileName: data.file.name,
+        }),
       })
-      const responseData = (await response.json()) satisfies IngestResponse
+      const responseData = (await response.json()) as IngestResponse
       setIsLoading(false)
       await Router.push(`/chats/${responseData.chatId}`)
     } catch (error) {
@@ -51,6 +55,12 @@ const Home: NextPageWithLayout = () => {
       setIsLoading(false)
     }
   }, [])
+
+  useEffect(() => {
+    if (selectedFile) {
+      document.cookie = `selectedFile=${selectedFile.name}`
+    }
+  }, [selectedFile])
 
   //  auto submit form when file is selected
   useEffect(() => {
