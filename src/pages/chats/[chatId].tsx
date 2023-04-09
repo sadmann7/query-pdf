@@ -143,7 +143,7 @@ const Chat: NextPageWithLayout = () => {
                       type="button"
                       aria-label="Clear query"
                       variant="ghost"
-                      className="h-auto rounded-full p-1"
+                      className="h-auto rounded-full p-0"
                       onClick={() => {
                         reset()
                       }}
@@ -160,7 +160,7 @@ const Chat: NextPageWithLayout = () => {
                 <Button
                   aria-label="Chat"
                   variant="ghost"
-                  className="h-auto rounded-full p-1"
+                  className="h-auto rounded-full p-0.5"
                   disabled={isLoading}
                 >
                   <Send
