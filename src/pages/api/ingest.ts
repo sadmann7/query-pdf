@@ -4,14 +4,13 @@ import { DirectoryLoader } from "langchain/document_loaders"
 import { OpenAIEmbeddings } from "langchain/embeddings"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
 import { PineconeStore } from "langchain/vectorstores"
-import { nanoid } from "nanoid"
 
 import { CustomPDFLoader } from "@/lib/custom-pdf-loader"
 import { createPineconeIndex } from "@/lib/pinecone"
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
-    fileName: string
+    chatId: string
   }
 }
 
@@ -23,7 +22,8 @@ export default async function handler(
   res: NextApiResponse<IngestResponse>
 ) {
   try {
-    const { fileName } = req.body
+    const { chatId } = req.body
+    console.log(chatId)
 
     // Load raw docs from the all files in the directory
     const directoryLoader = new DirectoryLoader(filePath, {
@@ -56,12 +56,12 @@ export default async function handler(
     await PineconeStore.fromDocuments(docs, embeddings, {
       pineconeIndex,
       textKey: "text",
-      namespace: nanoid(),
+      namespace: chatId,
     })
 
     res.status(200).json({
       message: "✅ Successfully ingested your data",
-      chatId: nanoid(),
+      chatId: chatId,
     })
   } catch (error) {
     console.log("error", error)

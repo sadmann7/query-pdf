@@ -1,3 +1,6 @@
+import { useChatStore } from "@/stores/chat"
+
+import type { NavItem } from "@/types/nav"
 import { chatConfig } from "@/config/chat"
 import Meta from "@/components/layouts/meta"
 import { SidebarNav } from "@/components/layouts/sidebar-nav"
@@ -10,6 +13,19 @@ interface LayoutProps {
 }
 
 export function ChatLayout({ children }: LayoutProps) {
+  const chatStore = useChatStore((state) => ({
+    chats: state.chats,
+  }))
+
+  const sidebarNavItems = chatStore.chats.map((chat) => ({
+    title: chat.chatName,
+    href: `/chats/${chat.chatId}`,
+    disabled: false,
+    external: false,
+    icon: "message",
+    label: undefined,
+  })) satisfies NavItem[]
+
   return (
     <>
       <Meta />
@@ -20,7 +36,7 @@ export function ChatLayout({ children }: LayoutProps) {
             <aside className="fixed top-0 z-30 hidden h-full w-full shrink-0 overflow-y-auto border-r border-r-slate-400 dark:border-r-slate-600 md:sticky md:block md:pt-7 lg:pt-0">
               <ScrollArea className="h-full pr-6 lg:py-7">
                 <div role="presentation" className="container">
-                  <SidebarNav items={chatConfig.sidebarNav} />
+                  <SidebarNav items={sidebarNavItems} />
                 </div>
               </ScrollArea>
             </aside>

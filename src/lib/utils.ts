@@ -6,6 +6,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function truncate(text: string, length: number = 100) {
+  return text.length > length ? `${text.substring(0, length)}...` : text
+}
+
 export function chunk(
   inputs: Document[],
   chunkSize: number = 100

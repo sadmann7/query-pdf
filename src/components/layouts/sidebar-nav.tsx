@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { NavItem } from "@/types/nav"
-import { cn } from "@/lib/utils"
+import { cn, truncate } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 
 export interface SidebarNavProps {
@@ -33,9 +33,9 @@ export function SidebarNav({ items }: SidebarNavProps) {
                   rel={item.external ? "noreferrer" : ""}
                 >
                   {item.icon && (
-                    <Icons.plus className="h-5 w-5 text-slate-600 dark:text-slate-200" />
+                    <Icons.message className="h-5 w-5 text-slate-600 dark:text-slate-200" />
                   )}
-                  {item.title}
+                  {truncate(item.title, 10)}
                   {item.label && (
                     <span className="ml-2 rounded-md bg-teal-100 px-1.5 py-0.5 text-xs no-underline group-hover:no-underline dark:text-slate-900">
                       {item.label}
@@ -47,7 +47,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
                   {item.icon && (
                     <Icons.message className="h-5 w-5 text-slate-600 dark:text-slate-200" />
                   )}
-                  {item.title}
+                  {truncate(item.title, 10)}
                 </span>
               )}
             </div>

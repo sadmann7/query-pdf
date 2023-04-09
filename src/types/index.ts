@@ -12,6 +12,11 @@ export interface Config {
   sidebarNav?: SidebarNavItem[]
 }
 
+export type IngestResponse = {
+  message: string
+  chatId: string
+}
+
 export type Message = {
   type: "bot" | "user"
   message: string
@@ -26,7 +31,8 @@ export type MessageState = {
   pendingSourceDocs?: Document[]
 }
 
-export type IngestResponse = {
-  message: string
+export type Chat = {
   chatId: string
+  chatName: string
+  messages: Message[]
 }

@@ -4,6 +4,7 @@ import Router from "next/router"
 import type { NextPageWithLayout } from "@/pages/_app"
 import type { IngestResponse } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { nanoid } from "nanoid"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { z } from "zod"
 
@@ -44,7 +45,7 @@ const Home: NextPageWithLayout = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          fileName: data.file.name,
+          chatId: nanoid(),
         }),
       })
       const responseData = (await response.json()) as IngestResponse

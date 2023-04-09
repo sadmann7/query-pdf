@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Head from "next/head"
-import Router from "next/router"
+import { useRouter } from "next/router"
 import { NextPageWithLayout } from "@/pages/_app"
+import { useChatStore } from "@/stores/chat"
 import type { Message, MessageState } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { Send, X } from "lucide-react"
+import { nanoid } from "nanoid"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { ReactMarkdown } from "react-markdown/lib/react-markdown"
@@ -25,15 +27,22 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>
 
 const Chat: NextPageWithLayout = () => {
-  const { chatId } = Router.query as { chatId: string }
-  const fileName = window.localStorage.getItem("fileName")
+  const router = useRouter()
+  const { chatId } = router.query as { chatId: string }
+
+  const chatStore = useChatStore((state) => ({
+    chats: state.chats,
+    addChat: state.addChat,
+    editChat: state.editChat,
+    removeChat: state.removeChat,
+  }))
 
   const [isLoading, setIsLoading] = useState(false)
   const [messageState, setMessageState] = useState<MessageState>({
     messages: [
       {
-        message: "Hi, what would you like to learn about this PDF?",
         type: "bot",
+        message: "Hi, what would you like to learn about this PDF?",
       },
     ],
     history: [],
@@ -152,6 +161,13 @@ const Chat: NextPageWithLayout = () => {
     memoedMessages,
   })
 
+  // add chat to store
+  useEffect(() => {
+    if (!chatId) return
+    if (chatStore.chats.find((c) => c.chatId === chatId)) return
+    chatStore.addChat(chatId, chatId, memoedMessages)
+  }, [chatId, chatStore, memoedMessages])
+
   return (
     <>
       <Head>
@@ -160,7 +176,7 @@ const Chat: NextPageWithLayout = () => {
       <ScrollArea className="h-full">
         <div className="container h-full w-full max-w-4xl flex-1 overflow-y-auto overflow-x-hidden">
           <div className="absolute left-1/2 top-0 w-full -translate-x-1/2 bg-white py-5 text-center text-base font-bold leading-tight tracking-normal dark:bg-zinc-900 sm:text-lg md:text-xl lg:text-2xl">
-            <h1 className="line-clamp-1">Chat with {fileName ?? "your PDF"}</h1>
+            <h1 className="line-clamp-1">Chat with {"your PDF"}</h1>
           </div>
           <div className="mb-24 mt-20">
             {memoedMessages.map((message, i) =>
