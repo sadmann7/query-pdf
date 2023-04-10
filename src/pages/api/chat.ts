@@ -27,7 +27,7 @@ export default async function handler(
   if (!question) {
     return res.status(400).json({ message: "No question in the request" })
   }
-  // OpenAI recommends replacing newlines with spaces for best results
+  // openai recommends replacing newlines with spaces for best results
   const sanitizedQuestion = question.trim().replaceAll("\n", " ")
 
   const pineconeIndex = await createPineconeIndex({
@@ -36,7 +36,7 @@ export default async function handler(
     pineconeIndexName: process.env.PINECONE_INDEX_NAME ?? "",
   })
 
-  // Create vectorstore
+  // create vectorstore
   const vectorStore = await PineconeStore.fromExistingIndex(
     new OpenAIEmbeddings(),
     {
@@ -58,18 +58,17 @@ export default async function handler(
 
   sendData(JSON.stringify({ data: "" }))
 
-  //create chain
+  // create chain
   const chain = makeChain(vectorStore, (token: string) => {
     sendData(JSON.stringify({ data: token }))
   })
 
   try {
-    //Ask a question
+    // ask a question
     const response = await chain.call({
       question: sanitizedQuestion,
       chat_history: chatHistory ?? [],
     })
-
     console.log("response", response)
     sendData(JSON.stringify({ sourceDocs: response.sourceDocuments }))
   } catch (error) {

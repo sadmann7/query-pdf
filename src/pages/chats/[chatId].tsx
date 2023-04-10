@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils"
 import { ChatLayout } from "@/components/layouts/chat-layout"
 import { Button } from "@/components/ui/button"
 import LoadingDots from "@/components/ui/loading-dots"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 
 const schema = z.object({
@@ -158,11 +159,11 @@ const Chat: NextPageWithLayout = () => {
       <Head>
         <title>Chat | Chat with PDF</title>
       </Head>
-      <section className="h-full w-full">
+      <ScrollArea className="h-full">
         <div className="container h-full w-full max-w-4xl flex-1 overflow-y-auto overflow-x-hidden">
           <div className="absolute left-1/2 top-0 w-full -translate-x-1/2 bg-white py-5 text-center text-base font-bold leading-tight tracking-normal dark:bg-zinc-900 sm:text-lg md:text-xl lg:text-2xl">
             <h1 className="line-clamp-1">
-              Chat with {chats[0]?.name ?? "your PDF"}
+              Chat with {chats[chats.length - 1]?.name ?? "your PDF"}
             </h1>
           </div>
           <div ref={chatRef} className="mb-24 mt-20">
@@ -216,6 +217,7 @@ const Chat: NextPageWithLayout = () => {
                   formState.errors.query && "border-red-500"
                 )}
                 onKeyDown={(e) => {
+                  if (isLoading) return
                   if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
                     handleSubmit(onSubmit)()
                   }
@@ -256,7 +258,7 @@ const Chat: NextPageWithLayout = () => {
             </fieldset>
           </form>
         </div>
-      </section>
+      </ScrollArea>
     </>
   )
 }

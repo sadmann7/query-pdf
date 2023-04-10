@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Config } from "@/types"
 
 import { siteConfig } from "@/config/site"
-import { cn } from "@/lib/utils"
+import { cn, truncate } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import {
@@ -52,7 +52,7 @@ export function MainNav({ config }: MainNavProps) {
             variant="ghost"
             className="-ml-4 text-base hover:bg-transparent focus:ring-0 md:hidden"
           >
-            <Icons.logo className="mr-2 h-4 w-4" />{" "}
+            <Icons.logo className="mr-2 h-4 w-4" />
             <span className="font-bold">Menu</span>
           </Button>
         </DropdownMenuTrigger>
@@ -76,9 +76,11 @@ export function MainNav({ config }: MainNavProps) {
               >
                 <Link href={item.href}>
                   {item.icon && (
-                    <Icons.plus className="h-4 w-4" aria-hidden="true" />
+                    <item.icon className="h-4 w-4" aria-hidden="true" />
                   )}
-                  <span className="line-clamp-1">{item.title}</span>
+                  <span className="line-clamp-1">
+                    {item.title ? truncate(item.title, 24) : ""}
+                  </span>
                 </Link>
               </DropdownMenuItem>
             ) : (
@@ -87,9 +89,9 @@ export function MainNav({ config }: MainNavProps) {
                 className="flex items-center gap-2.5"
               >
                 {item.icon && (
-                  <Icons.message className="h-4 w-4" aria-hidden="true" />
+                  <item.icon className="h-4 w-4" aria-hidden="true" />
                 )}
-                <span className="line-clamp-1">{item.title}</span>
+                {item.title ? truncate(item.title, 24) : ""}
               </DropdownMenuItem>
             )
           )}
