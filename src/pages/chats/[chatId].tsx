@@ -16,7 +16,6 @@ import { cn } from "@/lib/utils"
 import { ChatLayout } from "@/components/layouts/chat-layout"
 import { Button } from "@/components/ui/button"
 import LoadingDots from "@/components/ui/loading-dots"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 
 const schema = z.object({
@@ -159,7 +158,7 @@ const Chat: NextPageWithLayout = () => {
       <Head>
         <title>Chat | Chat with PDF</title>
       </Head>
-      <ScrollArea className="h-full">
+      <section className="h-full w-full">
         <div className="container h-full w-full max-w-4xl flex-1 overflow-y-auto overflow-x-hidden">
           <div className="absolute left-1/2 top-0 w-full -translate-x-1/2 bg-white py-5 text-center text-base font-bold leading-tight tracking-normal dark:bg-zinc-900 sm:text-lg md:text-xl lg:text-2xl">
             <h1 className="line-clamp-1">
@@ -257,7 +256,7 @@ const Chat: NextPageWithLayout = () => {
             </fieldset>
           </form>
         </div>
-      </ScrollArea>
+      </section>
     </>
   )
 }

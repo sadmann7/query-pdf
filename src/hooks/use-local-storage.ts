@@ -1,10 +1,10 @@
 import * as React from "react"
 import type { SetState } from "@/types"
 
-const useLocalStorage = <T extends unknown>(
+export function useLocalStorage<T extends unknown>(
   key: string,
   initialValue: T
-): [T, SetState<T>] => {
+): [T, SetState<T>] {
   const [storedValue, setStoredValue] = React.useState<T>(() => {
     try {
       const item = window.localStorage.getItem(key)
@@ -28,5 +28,3 @@ const useLocalStorage = <T extends unknown>(
 
   return [storedValue, setValue]
 }
-
-export { useLocalStorage }

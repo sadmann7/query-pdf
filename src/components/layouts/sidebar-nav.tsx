@@ -37,7 +37,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
                       aria-hidden="true"
                     />
                   )}
-                  {item.title ? truncate(item.title, 10) : ""}
+                  {item.title ? truncate(item.title, 15) : ""}
                   {item.label && (
                     <span className="ml-2 rounded-md bg-teal-100 px-1.5 py-0.5 text-xs no-underline group-hover:no-underline dark:text-slate-900">
                       {item.label}
@@ -52,7 +52,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
                       aria-hidden="true"
                     />
                   )}
-                  {item.title ? truncate(item.title, 10) : ""}
+                  {item.title ? truncate(item.title, 15) : ""}
                 </span>
               )}
             </div>
