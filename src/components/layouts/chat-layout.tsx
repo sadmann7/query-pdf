@@ -22,10 +22,10 @@ export function ChatLayout({ children }: LayoutProps) {
     setIsHydrated(true)
   }, [])
 
-  // chat store
+  // create sidebar nav items from chat store
   const { chats } = useChatStore()
 
-  const sidebarNavItems = [
+  const sidebarNavItems: NavItem[] = [
     {
       title: "New Chat",
       href: "/",
