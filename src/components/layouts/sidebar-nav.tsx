@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation"
 
 import { NavItem } from "@/types/nav"
 import { cn, truncate } from "@/lib/utils"
-import { Icons } from "@/components/icons"
 
 export interface SidebarNavProps {
   items: NavItem[]
@@ -26,14 +25,17 @@ export function SidebarNav({ items }: SidebarNavProps) {
                   className={cn(
                     "group flex w-full items-center gap-2.5 rounded-md px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800",
                     {
-                      "bg-slate-100 dark:bg-slate-800": pathname === item.href,
+                      "bg-slate-100 dark:bg-zinc-800": pathname === item.href,
                     }
                   )}
                   target={item.external ? "_blank" : ""}
                   rel={item.external ? "noreferrer" : ""}
                 >
                   {item.icon && (
-                    <Icons.message className="h-5 w-5 text-slate-600 dark:text-slate-200" />
+                    <item.icon
+                      className="h-5 w-5 text-slate-600 dark:text-slate-200"
+                      aria-hidden="true"
+                    />
                   )}
                   {item.title ? truncate(item.title, 10) : ""}
                   {item.label && (
@@ -45,7 +47,10 @@ export function SidebarNav({ items }: SidebarNavProps) {
               ) : (
                 <span className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                   {item.icon && (
-                    <Icons.message className="h-5 w-5 text-slate-600 dark:text-slate-200" />
+                    <item.icon
+                      className="h-5 w-5 text-slate-600 dark:text-slate-200"
+                      aria-hidden="true"
+                    />
                   )}
                   {item.title ? truncate(item.title, 10) : ""}
                 </span>

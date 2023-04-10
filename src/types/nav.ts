@@ -5,7 +5,7 @@ export interface NavItem {
   href?: string
   disabled?: boolean
   external?: boolean
-  icon?: keyof typeof Icons
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
   label?: string
 }
 

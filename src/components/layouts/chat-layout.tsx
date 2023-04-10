@@ -3,6 +3,7 @@ import { useChatStore } from "@/stores/chat"
 
 import type { NavItem } from "@/types/nav"
 import { chatConfig } from "@/config/chat"
+import { Icons } from "@/components/icons"
 import Meta from "@/components/layouts/meta"
 import { SidebarNav } from "@/components/layouts/sidebar-nav"
 import { SiteFooter } from "@/components/layouts/site-footer"
@@ -26,14 +27,19 @@ export function ChatLayout({ children }: LayoutProps) {
     chats: state.chats,
   }))
 
-  const sidebarNavItems = chatStore.chats.map((chat) => ({
-    title: chat.name,
-    href: `/chats/${chat.id}`,
-    disabled: false,
-    external: false,
-    icon: "message",
-    label: undefined,
-  })) satisfies NavItem[]
+  const sidebarNavItems = chatStore.chats
+    .map((chat) => ({
+      title: chat.name,
+      href: `/chats/${chat.id}`,
+      icon: Icons.message,
+    }))
+    .reverse() satisfies NavItem[]
+
+  sidebarNavItems.push({
+    title: "New Chat",
+    href: "/",
+    icon: Icons.plus,
+  })
 
   return (
     <>

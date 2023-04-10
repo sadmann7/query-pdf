@@ -1,4 +1,4 @@
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast"
 
 const ToastWrapper = () => {
   return (
@@ -18,7 +18,7 @@ const ToastWrapper = () => {
         },
       }}
     />
-  );
-};
+  )
+}
 
-export default ToastWrapper;
+export default ToastWrapper
