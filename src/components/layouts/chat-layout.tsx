@@ -27,8 +27,8 @@ export function ChatLayout({ children }: LayoutProps) {
   }))
 
   const sidebarNavItems = chatStore.chats.map((chat) => ({
-    title: chat.chatName,
-    href: `/chats/${chat.chatId}`,
+    title: chat.name,
+    href: `/chats/${chat.id}`,
     disabled: false,
     external: false,
     icon: "message",

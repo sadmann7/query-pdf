@@ -32,7 +32,8 @@ export type MessageState = {
 }
 
 export type Chat = {
-  chatId: string
-  chatName: string
+  id: string
+  name: string
   messages: Message[]
+  sources?: Document[]
 }

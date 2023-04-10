@@ -28,51 +28,55 @@ const Home: NextPageWithLayout = () => {
   const chatStore = useChatStore((state) => ({
     chats: state.chats,
     addChat: state.addChat,
-    editChat: state.editChat,
+    updateChat: state.updateChat,
     removeChat: state.removeChat,
   }))
 
   // react-hook-form
-  const { handleSubmit, formState, setValue } = useForm<Inputs>({
+  const { handleSubmit, formState, setValue, watch } = useForm<Inputs>({
     resolver: zodResolver(schema),
   })
-  const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
-    console.log(data)
+  const onSubmit: SubmitHandler<Inputs> = useCallback(
+    async (data) => {
+      console.log(data)
 
-    if (!(data.file instanceof File)) {
-      toast.error("Upload a PDF file")
-      return
-    }
-    setIsLoading(true)
+      if (!(data.file instanceof File)) {
+        toast.error("Upload a PDF file")
+        return
+      }
+      setIsLoading(true)
 
-    try {
-      const response = await fetch("/api/ingest", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          chatId: nanoid(),
-        }),
-      })
-      const responseData = (await response.json()) as IngestResponse
-      chatStore.addChat(responseData.chatId, data.file.name, [])
-      setIsLoading(false)
-      await Router.push(`/chats/${responseData.chatId}`)
-    } catch (error: unknown) {
-      error instanceof Error
-        ? toast.error(error.message)
-        : toast.error("Something went wrong, please try again")
-      setIsLoading(false)
-    }
-  }, [])
+      try {
+        const response = await fetch("/api/ingest", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chatId: nanoid(),
+          }),
+        })
+        const responseData = (await response.json()) as IngestResponse
+
+        // create a new chat for the chat id
+        chatStore.addChat(responseData.chatId, data.file.name, [])
+        setIsLoading(false)
+        await Router.push(`/chats/${responseData.chatId}`)
+      } catch (error: unknown) {
+        setIsLoading(false)
+        error instanceof Error
+          ? toast.error(error.message)
+          : toast.error("Something went wrong, please try again")
+      }
+    },
+    [chatStore]
+  )
 
   //  auto submit form when file is selected
   useEffect(() => {
-    if (formState.isValid) {
-      handleSubmit(onSubmit)()
-    }
-  }, [formState.isValid, selectedFile, handleSubmit, onSubmit])
+    const subscription = watch(() => handleSubmit(onSubmit)())
+    return () => subscription.unsubscribe()
+  }, [handleSubmit, onSubmit, watch])
 
   return (
     <>

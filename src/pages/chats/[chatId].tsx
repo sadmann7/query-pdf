@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState } from "react"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { NextPageWithLayout } from "@/pages/_app"
@@ -33,8 +33,6 @@ const Chat: NextPageWithLayout = () => {
   const chatStore = useChatStore((state) => ({
     chats: state.chats,
     addChat: state.addChat,
-    editChat: state.editChat,
-    removeChat: state.removeChat,
   }))
 
   const [isLoading, setIsLoading] = useState(false)
@@ -59,8 +57,6 @@ const Chat: NextPageWithLayout = () => {
     console.log(data)
 
     const question = data.query.trim()
-    setIsLoading(true)
-    reset()
 
     setMessageState((state) => ({
       ...state,
@@ -74,6 +70,8 @@ const Chat: NextPageWithLayout = () => {
       pending: undefined,
     }))
 
+    setIsLoading(true)
+    reset()
     setMessageState((state) => ({ ...state, pending: "loading..." }))
 
     const ctrl = new AbortController()
@@ -98,7 +96,7 @@ const Chat: NextPageWithLayout = () => {
                 ...state.messages,
                 {
                   type: "bot",
-                  message: state.pending.replace("loading...", "") ?? "",
+                  message: state.pending?.replace("loading...", "") ?? "",
                   sourceDocs: state.pendingSourceDocs,
                 },
               ],
@@ -121,15 +119,16 @@ const Chat: NextPageWithLayout = () => {
                 pending: (state.pending ?? "") + data.data,
               }))
             }
+            setIsLoading(false)
           }
         },
       })
     } catch (error: unknown) {
+      setIsLoading(false)
       error instanceof Error
         ? toast.error(error.message)
         : toast.error("Something went wrong, please try again")
     }
-    setIsLoading(false)
   }
 
   // memoize the messages if pending is not undefined
@@ -168,7 +167,7 @@ const Chat: NextPageWithLayout = () => {
         <div className="container h-full w-full max-w-4xl flex-1 overflow-y-auto overflow-x-hidden">
           <div className="absolute left-1/2 top-0 w-full -translate-x-1/2 bg-white py-5 text-center text-base font-bold leading-tight tracking-normal dark:bg-zinc-900 sm:text-lg md:text-xl lg:text-2xl">
             <h1 className="line-clamp-1">
-              Chat with {chatStore.chats[0]?.chatName ?? "your PDF"}
+              Chat with {chatStore.chats[0]?.name ?? "your PDF"}
             </h1>
           </div>
           <div ref={chatRef} className="mb-24 mt-20">
@@ -178,15 +177,12 @@ const Chat: NextPageWithLayout = () => {
                   key={i}
                   className="my-4 w-fit rounded-md border border-slate-300 bg-zinc-200/25 px-2.5 py-1.5 text-sm text-slate-950 dark:border-slate-500 dark:bg-zinc-700/75 dark:text-slate-50"
                 >
-                  {isLoading && i === memoedMessages.length - 1 ? (
+                  {isLoading && memoedMessages.length - 1 === i ? (
                     <LoadingDots color="#64748b" />
                   ) : (
                     <ReactMarkdown linkTarget="_blank">
                       {message.message}
                     </ReactMarkdown>
-                  )}
-                  {!isLoading && message.sourceDocs && (
-                    <Soruces sources={message.sourceDocs} i={i} />
                   )}
                 </div>
               ) : (
