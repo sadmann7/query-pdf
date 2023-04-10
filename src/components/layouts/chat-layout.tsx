@@ -22,7 +22,7 @@ export function ChatLayout({ children }: LayoutProps) {
     setIsHydrated(true)
   }, [])
 
-  // create sidebar nav items from chat store
+  // create sidebar nav items from chats
   const { chats } = useChatStore()
 
   const sidebarNavItems: NavItem[] = [
