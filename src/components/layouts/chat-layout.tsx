@@ -32,8 +32,8 @@ export function ChatLayout({ children }: LayoutProps) {
       icon: Icons.plus,
     },
     {
-      title: chats[chats.length - 1].name,
-      href: `/chats/${chats[chats.length - 1].id}`,
+      title: chats[chats.length - 1]?.name,
+      href: `/chats/${chats[chats.length - 1]?.id}`,
       icon: Icons.message,
     },
   ]
