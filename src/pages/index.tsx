@@ -47,14 +47,13 @@ const Home: NextPageWithLayout = () => {
       setIsLoading(true)
 
       try {
+        const formData = new FormData()
+        formData.append("file", data.file)
+        formData.append("chatId", nanoid())
+
         const response = await fetch("/api/ingest", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            chatId: nanoid(),
-          }),
+          body: formData,
         })
         const responseData = (await response.json()) as IngestResponse
 
@@ -103,7 +102,7 @@ const Home: NextPageWithLayout = () => {
             <FileInput
               name="file"
               setValue={setValue}
-              maxSize={10 * 1024 * 1024}
+              maxSize={8 * 1024 * 1024}
               selectedFile={selectedFile}
               setSelectedFile={setSelectedFile}
               previewType="name"

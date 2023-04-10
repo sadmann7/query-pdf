@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { NextPageWithLayout } from "@/pages/_app"
@@ -14,7 +14,6 @@ import { z } from "zod"
 
 import { cn } from "@/lib/utils"
 import { ChatLayout } from "@/components/layouts/chat-layout"
-import Soruces from "@/components/sources"
 import { Button } from "@/components/ui/button"
 import LoadingDots from "@/components/ui/loading-dots"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -30,10 +29,7 @@ const Chat: NextPageWithLayout = () => {
   const { chatId } = router.query as { chatId: string }
 
   // chat store
-  const chatStore = useChatStore((state) => ({
-    chats: state.chats,
-    addChat: state.addChat,
-  }))
+  const { chats } = useChatStore()
 
   const [isLoading, setIsLoading] = useState(false)
   const [messageState, setMessageState] = useState<MessageState>({
@@ -167,7 +163,7 @@ const Chat: NextPageWithLayout = () => {
         <div className="container h-full w-full max-w-4xl flex-1 overflow-y-auto overflow-x-hidden">
           <div className="absolute left-1/2 top-0 w-full -translate-x-1/2 bg-white py-5 text-center text-base font-bold leading-tight tracking-normal dark:bg-zinc-900 sm:text-lg md:text-xl lg:text-2xl">
             <h1 className="line-clamp-1">
-              Chat with {chatStore.chats[0]?.name ?? "your PDF"}
+              Chat with {chats[0]?.name ?? "your PDF"}
             </h1>
           </div>
           <div ref={chatRef} className="mb-24 mt-20">

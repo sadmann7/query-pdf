@@ -1,11 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse, PageConfig } from "next"
 import type { IngestResponse } from "@/types"
-import { DirectoryLoader } from "langchain/document_loaders"
+import formidable from "formidable"
+import { Document } from "langchain/document"
 import { OpenAIEmbeddings } from "langchain/embeddings"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
 import { PineconeStore } from "langchain/vectorstores"
 
-import { CustomPDFLoader } from "@/lib/custom-pdf-loader"
+import { fileConsumer, formidablePromise } from "@/lib/formidable"
+import { getTextContentFromPDF } from "@/lib/pdf"
 import { createPineconeIndex } from "@/lib/pinecone"
 
 interface ExtendedNextApiRequest extends NextApiRequest {
@@ -14,46 +16,77 @@ interface ExtendedNextApiRequest extends NextApiRequest {
   }
 }
 
-//  Name of directory to retrieve your files from
-const filePath = "src/docs"
+const formidableConfig = {
+  keepExtensions: true,
+  maxFileSize: 10_000_000,
+  maxFieldsSize: 10_000_000,
+  maxFields: 7,
+  allowEmptyFiles: false,
+  multiples: true,
+}
 
 export default async function handler(
   req: ExtendedNextApiRequest,
   res: NextApiResponse<IngestResponse>
 ) {
   try {
-    const { chatId } = req.body
-    console.log(chatId)
+    // store the file buffers in memory
+    const endBuffers: {
+      [filename: string]: Buffer
+    } = {}
 
-    // Load raw docs from the all files in the directory
-    const directoryLoader = new DirectoryLoader(filePath, {
-      ".pdf": (path) => new CustomPDFLoader(path),
+    // parse the request
+    const { fields, files } = await formidablePromise(req, {
+      ...formidableConfig,
+      // consume this, otherwise formidable tries to save the file to disk
+      fileWriteStreamHandler: (file) => fileConsumer(file, endBuffers),
     })
 
-    // const loader = new PDFLoader(filePath);
-    const rawDocs = await directoryLoader.load()
+    const chatId = fields.chatId as string
 
-    // Split text into chunks
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-      chunkOverlap: 200,
-    })
+    // get the text from the files
+    const docs = await Promise.all(
+      Object.values(files).map(async (fileObj: formidable.file) => {
+        let fileText = ""
+        const fileData = endBuffers[fileObj.newFilename]
+        switch (fileObj.mimetype) {
+          case "text/plain":
+            fileText = fileData.toString()
+            break
+          case "application/pdf":
+            fileText = await getTextContentFromPDF(fileData)
+            break
+          case "application/octet-stream":
+            fileText = fileData.toString()
+            break
+          default:
+            throw new Error("Unsupported file type.")
+        }
 
-    const docs = await textSplitter.splitDocuments(rawDocs)
-    console.log("split docs", docs)
+        // split text into chunks
+        const rawDocs = new Document({ pageContent: fileText })
+        const textSplitter = new RecursiveCharacterTextSplitter({
+          chunkSize: 1000,
+          chunkOverlap: 200,
+        })
+        return await textSplitter.splitDocuments([rawDocs])
+      })
+    )
+    // flatten the docs array
+    const flatDocs = docs.flat()
 
     console.log("creating vector store...")
-    // Create and store the embeddings in the vectorStore
+    // create and store the embeddings in the vectorStore
     const embeddings = new OpenAIEmbeddings()
-    // Change to your own index name
+    // change to your own index name
     const pineconeIndex = await createPineconeIndex({
       pineconeApiKey: process.env.PINECONE_API_KEY ?? "",
       pineconeEnvironment: process.env.PINECONE_ENVIRONMENT ?? "",
       pineconeIndexName: process.env.PINECONE_INDEX_NAME ?? "",
     })
 
-    // Embed the PDF documents
-    await PineconeStore.fromDocuments(docs, embeddings, {
+    // embed the PDF documents
+    await PineconeStore.fromDocuments(flatDocs, embeddings, {
       pineconeIndex,
       textKey: "text",
       namespace: chatId,
@@ -67,4 +100,10 @@ export default async function handler(
     console.log("error", error)
     throw new Error("❌ Failed to ingest your data")
   }
+}
+
+export const config: PageConfig = {
+  api: {
+    bodyParser: false,
+  },
 }

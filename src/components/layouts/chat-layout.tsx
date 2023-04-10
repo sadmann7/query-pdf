@@ -23,23 +23,20 @@ export function ChatLayout({ children }: LayoutProps) {
   }, [])
 
   // chat store
-  const chatStore = useChatStore((state) => ({
-    chats: state.chats,
-  }))
+  const { chats } = useChatStore()
 
-  const sidebarNavItems = chatStore.chats
-    .map((chat) => ({
-      title: chat.name,
-      href: `/chats/${chat.id}`,
+  const sidebarNavItems = [
+    {
+      title: "New Chat",
+      href: "/",
+      icon: Icons.plus,
+    },
+    {
+      title: chats[chats.length - 1].name,
+      href: `/chats/${chats[chats.length - 1].id}`,
       icon: Icons.message,
-    }))
-    .reverse() satisfies NavItem[]
-
-  sidebarNavItems.push({
-    title: "New Chat",
-    href: "/",
-    icon: Icons.plus,
-  })
+    },
+  ]
 
   return (
     <>
