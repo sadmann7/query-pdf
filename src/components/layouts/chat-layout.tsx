@@ -22,19 +22,17 @@ export function ChatLayout({ children }: LayoutProps) {
   // create chat layout config
   const { chats } = useChatStore()
 
-  const chatLayoutConfig = {
+  const chatLayoutConfig: GlobalConfig = {
     mainNav: chatConfig.mainNav,
-    sidebarNav: chatConfig.sidebarNav
-      ? [
-          ...chatConfig?.sidebarNav[Symbol.iterator](),
-          {
-            title: chats[chats.length - 1]?.name ?? "",
-            href: `/chats/${chats[chats.length - 1]?.id}`,
-            icon: Icons.message,
-          },
-        ]
-      : [],
-  } satisfies GlobalConfig
+    sidebarNav: [
+      ...chatConfig.sidebarNav,
+      {
+        title: chats[chats.length - 1]?.name,
+        href: `/chats/${chats[chats.length - 1]?.id}`,
+        icon: Icons.message,
+      },
+    ],
+  }
 
   return (
     <>

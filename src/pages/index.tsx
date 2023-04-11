@@ -8,10 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { nanoid } from "nanoid"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { toast } from "react-hot-toast"
-import { z } from "zod"
+import { Schema, z } from "zod"
 
 import { Layout } from "@/components/layouts/layout"
+import { Button } from "@/components/ui/button"
 import FileInput from "@/components/ui/form/file-input"
+import { Input } from "@/components/ui/input"
 
 const schema = z
   .object({
@@ -31,7 +33,12 @@ const Home: NextPageWithLayout = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   // chat store
-  const chatStore = useChatStore()
+  const chatStore = useChatStore((state) => ({
+    chats: state.chats,
+    addChat: state.addChat,
+    updateChat: state.updateChat,
+    removeChat: state.removeChat,
+  }))
 
   // react-hook-form
   const { register, handleSubmit, formState, setValue, watch } =
@@ -87,7 +94,7 @@ const Home: NextPageWithLayout = () => {
     [chatStore]
   )
 
-  // auto submit form when file is selected
+  //  auto submit form when file is selected
   useEffect(() => {
     const subscription = watch(() => handleSubmit(onSubmit)())
     return () => subscription.unsubscribe()
@@ -143,6 +150,7 @@ const Home: NextPageWithLayout = () => {
               Enter a link to your PDF
             </label>
             <Input
+              name="url"
               type="text"
               placeholder="Enter a link to your PDF"
               {...register("url")}

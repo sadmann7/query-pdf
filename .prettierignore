@@ -10,4 +10,3 @@ node_modules
 .next
 build
 .contentlayer
-globals.d.ts

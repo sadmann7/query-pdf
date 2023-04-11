@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse, PageConfig } from "next"
-import { env } from "@/env.mjs"
 import type { IngestResponse } from "@/types"
 import formidable from "formidable"
 import { Document } from "langchain/document"
@@ -11,6 +10,12 @@ import { fileConsumer, formidablePromise } from "@/lib/formidable"
 import { getTextContentFromPDF } from "@/lib/pdf"
 import { createPineconeIndex } from "@/lib/pinecone"
 
+interface ExtendedNextApiRequest extends NextApiRequest {
+  body: {
+    chatId: string
+  }
+}
+
 const formidableConfig = {
   keepExtensions: true,
   maxFileSize: 10_000_000,
@@ -21,7 +26,7 @@ const formidableConfig = {
 }
 
 export default async function handler(
-  req: NextApiRequest,
+  req: ExtendedNextApiRequest,
   res: NextApiResponse<IngestResponse>
 ) {
   try {
@@ -34,20 +39,16 @@ export default async function handler(
     const { fields, files } = await formidablePromise(req, {
       ...formidableConfig,
       // consume this, otherwise formidable tries to save the file to disk
-      fileWriteStreamHandler: ((file: formidable.File) =>
-        fileConsumer(file, endBuffers)) as any,
+      fileWriteStreamHandler: (file) => fileConsumer(file, endBuffers),
     })
 
     const chatId = fields.chatId as string
 
     // get the text from the files
     const docs = await Promise.all(
-      Object.values(files).map(async (fileObj: any) => {
+      Object.values(files).map(async (fileObj: formidable.file) => {
         let fileText = ""
         const fileData = endBuffers[fileObj.newFilename]
-        if (!fileData) {
-          throw new Error("No file data found.")
-        }
         switch (fileObj.mimetype) {
           case "text/plain":
             fileText = fileData.toString()
@@ -79,9 +80,9 @@ export default async function handler(
     const embeddings = new OpenAIEmbeddings()
     // change to your own index name
     const pineconeIndex = await createPineconeIndex({
-      pineconeApiKey: env.PINECONE_API_KEY ?? "",
-      pineconeEnvironment: env.PINECONE_ENVIRONMENT ?? "",
-      pineconeIndexName: env.PINECONE_INDEX_NAME ?? "",
+      pineconeApiKey: process.env.PINECONE_API_KEY ?? "",
+      pineconeEnvironment: process.env.PINECONE_ENVIRONMENT ?? "",
+      pineconeIndexName: process.env.PINECONE_INDEX_NAME ?? "",
     })
 
     // embed the PDF documents

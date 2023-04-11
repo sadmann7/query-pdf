@@ -209,9 +209,10 @@ const Chat: NextPageWithLayout = () => {
               </label>
               <Textarea
                 id="query"
+                name="query"
                 placeholder="Type your question..."
                 className={cn(
-                  "h-18 xxs:h-12 resize-none border-slate-700 py-3 pl-4 pr-16 placeholder:text-slate-600 dark:border-slate-400 dark:placeholder:text-slate-400",
+                  "h-18 resize-none border-slate-700 py-3 pl-4 pr-16 placeholder:text-slate-600 dark:border-slate-400 dark:placeholder:text-slate-400 xxs:h-12",
                   "flex w-full grow flex-col rounded-md border bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:bg-zinc-800 dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]",
                   formState.errors.query && "border-red-500"
                 )}
@@ -226,7 +227,6 @@ const Chat: NextPageWithLayout = () => {
                   }
                 }}
                 {...register("query", { required: true })}
-                disabled={isLoading || pending?.includes("loading...")}
               />
               <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2">
                 {watch("query") && (
@@ -250,7 +250,7 @@ const Chat: NextPageWithLayout = () => {
                   aria-label="Chat"
                   variant="ghost"
                   className="h-auto rounded-full p-0.5 text-slate-500 dark:text-slate-500"
-                  disabled={isLoading || pending?.includes("loading...")}
+                  disabled={isLoading}
                 >
                   <Send className="h-5 w-5" aria-hidden="true" />
                 </Button>

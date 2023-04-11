@@ -1,17 +1,17 @@
 import type { NavItem } from "@/types/nav"
 
 interface SiteConfig {
-  name: string
-  description: string
+  name?: string
+  description?: string
   mainNav: NavItem[]
-  links: {
+  links?: {
     twitter: string
     github: string
   }
 }
 
 export const siteConfig: SiteConfig = {
-  name: "QueryPDF",
+  name: "PaperChat",
   description: "Chat with PDFs and other documents in real time.",
   mainNav: [
     {
