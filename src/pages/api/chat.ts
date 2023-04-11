@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next"
+import { env } from "@/env.mjs"
 import { OpenAIEmbeddings } from "langchain/embeddings"
 import { PineconeStore } from "langchain/vectorstores"
 
@@ -31,9 +32,9 @@ export default async function handler(
   const sanitizedQuestion = question.trim().replaceAll("\n", " ")
 
   const pineconeIndex = await createPineconeIndex({
-    pineconeApiKey: process.env.PINECONE_API_KEY ?? "",
-    pineconeEnvironment: process.env.PINECONE_ENVIRONMENT ?? "",
-    pineconeIndexName: process.env.PINECONE_INDEX_NAME ?? "",
+    pineconeApiKey: env.PINECONE_API_KEY ?? "",
+    pineconeEnvironment: env.PINECONE_ENVIRONMENT ?? "",
+    pineconeIndexName: env.PINECONE_INDEX_NAME ?? "",
   })
 
   // create vectorstore

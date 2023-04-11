@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse, PageConfig } from "next"
+import { env } from "@/env.mjs"
 import type { IngestResponse } from "@/types"
 import formidable from "formidable"
 import { Document } from "langchain/document"
@@ -78,9 +79,9 @@ export default async function handler(
     const embeddings = new OpenAIEmbeddings()
     // change to your own index name
     const pineconeIndex = await createPineconeIndex({
-      pineconeApiKey: process.env.PINECONE_API_KEY ?? "",
-      pineconeEnvironment: process.env.PINECONE_ENVIRONMENT ?? "",
-      pineconeIndexName: process.env.PINECONE_INDEX_NAME ?? "",
+      pineconeApiKey: env.PINECONE_API_KEY ?? "",
+      pineconeEnvironment: env.PINECONE_ENVIRONMENT ?? "",
+      pineconeIndexName: env.PINECONE_INDEX_NAME ?? "",
     })
 
     // embed the PDF documents
