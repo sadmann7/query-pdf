@@ -39,16 +39,20 @@ export default async function handler(
     const { fields, files } = await formidablePromise(req, {
       ...formidableConfig,
       // consume this, otherwise formidable tries to save the file to disk
-      fileWriteStreamHandler: (file) => fileConsumer(file, endBuffers),
+      fileWriteStreamHandler: ((file: formidable.File) =>
+        fileConsumer(file, endBuffers)) as any,
     })
 
     const chatId = fields.chatId as string
 
     // get the text from the files
     const docs = await Promise.all(
-      Object.values(files).map(async (fileObj: formidable.file) => {
+      Object.values(files).map(async (fileObj: any) => {
         let fileText = ""
         const fileData = endBuffers[fileObj.newFilename]
+        if (!fileData) {
+          throw new Error("No file data found.")
+        }
         switch (fileObj.mimetype) {
           case "text/plain":
             fileText = fileData.toString()
