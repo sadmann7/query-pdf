@@ -42,11 +42,16 @@ export default function handler(req: NextRequest) {
               />
             </svg>
           </div>
-          <div tw="flex max-w-4xl items-center justify-center flex-col mt-10">
-            <div tw="text-5xl font-bold whitespace-pre-wrap tracking-tight leading-tight text-white px-8">
+          <div
+            tw="flex max-w-4xl items-center justify-center flex-col mt-10"
+            style={{
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            <div tw="text-5xl font-bold tracking-tight leading-tight text-white px-8">
               {title}
             </div>
-            <div tw="mt-5 text-3xl text-gray-300 text-center font-normal whitespace-pre-wrap tracking-tight leading-tight px-20">
+            <div tw="mt-5 text-3xl text-gray-300 text-center font-normal tracking-tight leading-tight px-20">
               {description}
             </div>
           </div>
@@ -57,8 +62,10 @@ export default function handler(req: NextRequest) {
         height: 630,
       }
     )
-  } catch (e) {
-    e instanceof Error ? console.log(`${e.message as string}`) : console.log(e)
+  } catch (error) {
+    error instanceof Error
+      ? console.log(`${error.message as string}`)
+      : console.log(error)
     return new Response(`Failed to generate the image`, {
       status: 500,
     })

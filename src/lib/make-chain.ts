@@ -21,7 +21,7 @@ Question: {question}
 =========
 {context}
 =========
-Answer in Markdown:`
+`
 )
 
 export const makeChain = (
@@ -53,7 +53,7 @@ export const makeChain = (
     vectorstore,
     combineDocumentsChain: docChain,
     questionGeneratorChain: questionGenerator,
-    returnSourceDocuments: true,
-    k: 2, //number of source documents to return
+    returnSourceDocuments: false,
+    k: 0, //number of source documents to return
   })
 }
