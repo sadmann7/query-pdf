@@ -31,12 +31,7 @@ const Home: NextPageWithLayout = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   // chat store
-  const chatStore = useChatStore((state) => ({
-    chats: state.chats,
-    addChat: state.addChat,
-    updateChat: state.updateChat,
-    removeChat: state.removeChat,
-  }))
+  const chatStore = useChatStore()
 
   // react-hook-form
   const { register, handleSubmit, formState, setValue, watch } =

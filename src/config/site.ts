@@ -11,7 +11,7 @@ interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  name: "ChatWithPDF",
+  name: "QueryPDF",
   description: "Chat with PDFs and other documents in real time.",
   mainNav: [
     {

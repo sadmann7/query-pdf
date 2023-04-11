@@ -49,6 +49,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     role          USER_ROLE @default(USER)
+    chats         Chat[]
 }
 
 model VerificationToken {
@@ -62,4 +63,30 @@ model VerificationToken {
 enum USER_ROLE {
     ADMIN
     USER
+}
+
+model Message {
+    id        String       @id @default(cuid())
+    type      MESSAGE_TYPE @default(BOT)
+    message   String
+    chat      Chat         @relation(fields: [chatId], references: [id])
+    chatId    String
+    createdAt DateTime     @default(now())
+}
+
+enum MESSAGE_TYPE {
+    BOT
+    USER
+}
+
+model Chat {
+    id        String    @id @default(cuid())
+    name      String
+    messages  Message[]
+    peding    String
+    history   String[]
+    user      User?     @relation(fields: [userId], references: [id])
+    userId    String?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
 }
