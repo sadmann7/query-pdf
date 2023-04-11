@@ -9,6 +9,7 @@ import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { Send, X } from "lucide-react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { toast } from "react-hot-toast"
+import ReactMarkdown from "react-markdown"
 import { z } from "zod"
 
 import { cn } from "@/lib/utils"
@@ -67,7 +68,7 @@ const Chat: NextPageWithLayout = () => {
 
     setIsLoading(true)
     reset()
-    setMessageState((state) => ({ ...state, pending: "loading..." }))
+    setMessageState((state) => ({ ...state, pending: "" }))
 
     const ctrl = new AbortController()
 
@@ -84,37 +85,28 @@ const Chat: NextPageWithLayout = () => {
         }),
         signal: ctrl.signal,
         onmessage: (event) => {
+          setIsLoading(false)
           if (event.data === "[DONE]") {
+            // end the stream
             setMessageState((state) => ({
               history: [...state.history, [question, state.pending ?? ""]],
               messages: [
                 ...state.messages,
                 {
                   type: "bot",
-                  message: state.pending?.replace("loading...", "") ?? "",
-                  sourceDocs: state.pendingSourceDocs,
+                  message: state.pending ?? "",
                 },
               ],
               pending: undefined,
               pendingSourceDocs: undefined,
             }))
-
-            setIsLoading(false)
             ctrl.abort()
           } else {
-            const data = JSON.parse(event.data)
-            if (data.sourceDocs) {
-              setMessageState((state) => ({
-                ...state,
-                pendingSourceDocs: data.sourceDocs,
-              }))
-            } else {
-              setMessageState((state) => ({
-                ...state,
-                pending: (state.pending ?? "") + data.data,
-              }))
-            }
-            setIsLoading(false)
+            // stream the messages
+            setMessageState((state) => ({
+              ...state,
+              pending: (state.pending ?? "") + event.data,
+            }))
           }
         },
       })
@@ -153,6 +145,12 @@ const Chat: NextPageWithLayout = () => {
     })
   }, [memoedMessages])
 
+  console.log({
+    isLoading,
+    memoedMessages,
+    history,
+  })
+
   return (
     <>
       <Head>
@@ -175,7 +173,9 @@ const Chat: NextPageWithLayout = () => {
                   {isLoading && memoedMessages.length - 1 === i ? (
                     <LoadingDots color="#64748b" />
                   ) : (
-                    message.message
+                    <ReactMarkdown linkTarget="_blank">
+                      {message.message}
+                    </ReactMarkdown>
                   )}
                 </div>
               ) : (
@@ -183,7 +183,9 @@ const Chat: NextPageWithLayout = () => {
                   <div className="flex flex-col items-end gap-1.5">
                     <div className="flex items-center gap-2.5">
                       <div className="rounded-md border border-slate-300 bg-blue-500 px-2.5 py-1.5 text-sm text-slate-50 dark:border-slate-500 dark:bg-blue-600">
-                        {message.message}
+                        <ReactMarkdown linkTarget="_blank">
+                          {message.message}
+                        </ReactMarkdown>
                       </div>
                     </div>
                   </div>

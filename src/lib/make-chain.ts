@@ -1,6 +1,6 @@
 import { CallbackManager } from "langchain/callbacks"
 import { ChatVectorDBQAChain, LLMChain, loadQAChain } from "langchain/chains"
-import { OpenAIChat } from "langchain/llms"
+import { ChatOpenAI } from "langchain/chat_models/openai"
 import { PromptTemplate } from "langchain/prompts"
 import { PineconeStore } from "langchain/vectorstores"
 
@@ -21,33 +21,15 @@ Question: {question}
 =========
 {context}
 =========
-`
+Answer in Markdown:`
 )
 
-export const makeChain = (
-  vectorstore: PineconeStore,
-  onTokenStream?: (token: string) => void
-) => {
+export const makeChain = (llm: ChatOpenAI, vectorstore: PineconeStore) => {
   const questionGenerator = new LLMChain({
-    llm: new OpenAIChat({ temperature: 0 }),
+    llm,
     prompt: CONDENSE_PROMPT,
   })
-  const docChain = loadQAChain(
-    new OpenAIChat({
-      temperature: 0,
-      modelName: "gpt-3.5-turbo", // change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
-      streaming: Boolean(onTokenStream),
-      callbackManager: onTokenStream
-        ? CallbackManager.fromHandlers({
-            async handleLLMNewToken(token) {
-              onTokenStream(token)
-              console.log(token)
-            },
-          })
-        : undefined,
-    }),
-    { prompt: QA_PROMPT }
-  )
+  const docChain = loadQAChain(llm, { prompt: QA_PROMPT })
 
   return new ChatVectorDBQAChain({
     vectorstore,
