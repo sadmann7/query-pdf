@@ -8,9 +8,9 @@ type MetaProps = {
 }
 
 const Meta = ({
-  title = "PaperChat",
+  title = "QueryPDF",
   description = "Chat with your PDF in real time.",
-  image = "https://paperchat.vercel.app/api/og?title=PaperChat&description=Chat%20with%20your%20PDF%20in%20real%20time.",
+  image = "https://querypdf.vercel.app/api/og?title=QueryPDF&description=Chat%20with%20your%20PDF%20in%20real%20time.",
   keywords = "Chat, PDF, Docs, Real-time, PaperChat, Real-time Chat",
 }: MetaProps) => {
   return (

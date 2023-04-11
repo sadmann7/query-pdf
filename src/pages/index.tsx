@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { nanoid } from "nanoid"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { toast } from "react-hot-toast"
-import { Schema, z } from "zod"
+import { z } from "zod"
 
 import { Layout } from "@/components/layouts/layout"
 import { Button } from "@/components/ui/button"
