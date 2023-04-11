@@ -1,8 +1,8 @@
-import type { Config } from "@/types"
+import type { GlobalConfig } from "@/types"
 
 import { Icons } from "@/components/icons"
 
-export const chatConfig: Config = {
+export const chatConfig: GlobalConfig = {
   mainNav: [
     {
       title: "Chats",

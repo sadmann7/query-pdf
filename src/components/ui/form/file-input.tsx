@@ -131,7 +131,7 @@ const FileInput = <TFieldValues extends FieldValues>({
           ? "h-full border-none p-0"
           : "h-60",
         disabled
-          ? "pointer-events-none opacity-80"
+          ? "pointer-events-none opacity-60"
           : "pointer-events-auto opacity-100",
         className
       )}
@@ -179,9 +179,9 @@ const FileInput = <TFieldValues extends FieldValues>({
       ) : isDragActive ? (
         <DragActive isDragActive={isDragActive} />
       ) : (
-        <div className="group grid place-items-center gap-1 sm:px-10">
+        <div className="grid place-items-center gap-1 sm:px-10">
           <UploadCloud
-            className="h-10 w-10 text-slate-700 group-hover:animate-pulse dark:text-slate-400"
+            className="h-10 w-10 text-slate-700 dark:text-slate-400"
             aria-hidden="true"
           />
           <p className="mt-2 text-base font-medium text-slate-700 dark:text-slate-400 sm:text-lg">

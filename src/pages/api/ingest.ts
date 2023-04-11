@@ -10,12 +10,6 @@ import { fileConsumer, formidablePromise } from "@/lib/formidable"
 import { getTextContentFromPDF } from "@/lib/pdf"
 import { createPineconeIndex } from "@/lib/pinecone"
 
-interface ExtendedNextApiRequest extends NextApiRequest {
-  body: {
-    chatId: string
-  }
-}
-
 const formidableConfig = {
   keepExtensions: true,
   maxFileSize: 10_000_000,
@@ -26,7 +20,7 @@ const formidableConfig = {
 }
 
 export default async function handler(
-  req: ExtendedNextApiRequest,
+  req: NextApiRequest,
   res: NextApiResponse<IngestResponse>
 ) {
   try {

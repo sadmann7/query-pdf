@@ -13,11 +13,17 @@ import { z } from "zod"
 import { Layout } from "@/components/layouts/layout"
 import FileInput from "@/components/ui/form/file-input"
 
-const schema = z.object({
-  file: z.unknown().refine((value) => value instanceof File, {
-    message: "Must be a file",
-  }),
-})
+const schema = z
+  .object({
+    file: z.unknown().refine((value) => value instanceof File, {
+      message: "Upload a PDF file",
+    }),
+    url: z.string(),
+  })
+  .partial()
+  .refine((data) => data.file || data.url, {
+    message: "Eiter select a file or enter a URL",
+  })
 type Inputs = z.infer<typeof schema>
 
 const Home: NextPageWithLayout = () => {
@@ -33,22 +39,31 @@ const Home: NextPageWithLayout = () => {
   }))
 
   // react-hook-form
-  const { handleSubmit, formState, setValue, watch } = useForm<Inputs>({
-    resolver: zodResolver(schema),
-  })
+  const { register, handleSubmit, formState, setValue, watch } =
+    useForm<Inputs>({
+      resolver: zodResolver(schema),
+    })
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async (data) => {
       console.log(data)
 
-      if (!(data.file instanceof File)) {
+      if (!data.file && !data.url) {
+        toast.error("Please select a file or enter a URL")
+        return
+      }
+
+      if (data.file && !(data.file instanceof File)) {
         toast.error("Upload a PDF file")
         return
       }
+
       setIsLoading(true)
 
       try {
         const formData = new FormData()
-        formData.append("file", data.file)
+        data.file &&
+          data.file instanceof File &&
+          formData.append("file", data.file)
         formData.append("chatId", nanoid())
 
         const response = await fetch("/api/ingest", {
@@ -58,7 +73,13 @@ const Home: NextPageWithLayout = () => {
         const responseData = (await response.json()) as IngestResponse
 
         // create a new chat for the chat id
-        chatStore.addChat(responseData.chatId, data.file.name, [])
+        chatStore.addChat(
+          responseData.chatId,
+          data.file && data.file instanceof File
+            ? data.file.name
+            : responseData.chatId,
+          []
+        )
         setIsLoading(false)
         await Router.push(`/chats/${responseData.chatId}`)
       } catch (error: unknown) {
@@ -87,12 +108,13 @@ const Home: NextPageWithLayout = () => {
           <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-5xl lg:text-6xl lg:leading-[1.1]">
             Chat with your PDF in real time
           </h1>
-          <p className="max-w-[750px] text-lg text-slate-700 dark:text-slate-400 sm:text-xl">
-            Simply upload your PDF and start chatting with it
+          <p className="max-w-[750px] text-center text-lg text-slate-700 dark:text-slate-400 sm:text-xl">
+            Simply upload your PDF or enter a link to your PDF and start
+            chatting
           </p>
         </div>
         <form
-          className="mx-auto w-full max-w-2xl"
+          className="mx-auto grid w-full max-w-xl place-items-center gap-2"
           onSubmit={handleSubmit(onSubmit)}
         >
           <fieldset className="relative grid w-full gap-2.5">
@@ -110,14 +132,34 @@ const Home: NextPageWithLayout = () => {
                 ["application/pdf"]: [".pdf"],
               }}
               isUploading={isLoading}
-              disabled={isLoading}
+              disabled={
+                !!watch("url")?.match(
+                  /^(https?:\/\/)?www\.([\da-z\.-]+)\.([a-z\.]{2,6})\/[\w \.-]+?\.pdf$/
+                ) || isLoading
+              }
             />
-            {formState.errors.file?.message && (
-              <p className="-mt-1 text-sm font-medium text-red-500">
-                {formState.errors.file.message}
+          </fieldset>
+          {/* <div className="bg-gradient-to-r from-slate-400 to-slate-500 bg-clip-text text-xl font-extrabold text-transparent md:text-2xl">
+            or
+          </div>
+          // todo: add chat with url feature
+          <fieldset className="relative grid w-full gap-2.5">
+            <label htmlFor="url" className="sr-only">
+              Enter a link to your PDF
+            </label>
+            <Input
+              name="url"
+              type="text"
+              placeholder="Enter a link to your PDF"
+              {...register("url")}
+              disabled={!!watch("file") || isLoading}
+            />
+            {formState.errors.url?.message && (
+              <p className="text-sm font-medium text-red-500">
+                {formState.errors.url.message}
               </p>
             )}
-          </fieldset>
+          </fieldset> */}
         </form>
       </section>
     </>

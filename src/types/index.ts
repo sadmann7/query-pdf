@@ -4,7 +4,7 @@ import type { NavItem, SidebarNavItem } from "@/types/nav"
 
 export type SetState<T> = React.Dispatch<React.SetStateAction<T>>
 
-export interface Config {
+export interface GlobalConfig {
   name?: string
   description?: string
   links?: Record<string, string>
