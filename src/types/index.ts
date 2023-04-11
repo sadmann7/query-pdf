@@ -1,6 +1,16 @@
 import type { Document } from "langchain/document"
 
+import type { NavItem, SidebarNavItem } from "@/types/nav"
+
 export type SetState<T> = React.Dispatch<React.SetStateAction<T>>
+
+export interface GlobalConfig {
+  name?: string
+  description?: string
+  links?: Record<string, string>
+  mainNav: NavItem[]
+  sidebarNav?: SidebarNavItem[]
+}
 
 export type IngestResponse = {
   message: string

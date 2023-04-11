@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Config } from "@/types"
+import type { GlobalConfig } from "@/types"
 
 import { siteConfig } from "@/config/site"
 import { cn, truncate } from "@/lib/utils"
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 interface MainNavProps {
-  config: Config
+  config: GlobalConfig
 }
 
 export function MainNav({ config }: MainNavProps) {

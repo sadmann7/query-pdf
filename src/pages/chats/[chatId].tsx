@@ -154,8 +154,6 @@ const Chat: NextPageWithLayout = () => {
     })
   }, [memoedMessages])
 
-  console.log(isLoading)
-
   return (
     <>
       <Head>

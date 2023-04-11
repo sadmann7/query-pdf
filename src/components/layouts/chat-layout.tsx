@@ -1,8 +1,9 @@
 import * as React from "react"
 import { useMounted } from "@/hooks/use-mouted"
 import { useChatStore } from "@/stores/chat"
+import type { GlobalConfig } from "@/types"
 
-import { chatConfig, type ChatConfig } from "@/config/chat"
+import { chatConfig } from "@/config/chat"
 import { Icons } from "@/components/icons"
 import Meta from "@/components/layouts/meta"
 import { SidebarNav } from "@/components/layouts/sidebar-nav"
@@ -21,7 +22,7 @@ export function ChatLayout({ children }: LayoutProps) {
   // create chat layout config
   const { chats } = useChatStore()
 
-  const chatLayoutConfig: ChatConfig = {
+  const chatLayoutConfig: GlobalConfig = {
     mainNav: chatConfig.mainNav,
     sidebarNav: [
       ...chatConfig.sidebarNav,

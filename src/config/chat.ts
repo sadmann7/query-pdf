@@ -1,15 +1,8 @@
-import type { NavItem, SidebarNavItem } from "@/types/nav"
+import type { GlobalConfig } from "@/types"
+
 import { Icons } from "@/components/icons"
 
-export interface ChatConfig {
-  name?: string
-  description?: string
-  links?: Record<string, string>
-  mainNav: NavItem[]
-  sidebarNav?: SidebarNavItem[]
-}
-
-export const chatConfig = {
+export const chatConfig: GlobalConfig = {
   mainNav: [
     {
       title: "Chats",
