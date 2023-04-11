@@ -148,7 +148,6 @@ const Home: NextPageWithLayout = () => {
               Enter a link to your PDF
             </label>
             <Input
-              name="url"
               type="text"
               placeholder="Enter a link to your PDF"
               {...register("url")}

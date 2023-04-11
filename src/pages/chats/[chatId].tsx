@@ -209,10 +209,9 @@ const Chat: NextPageWithLayout = () => {
               </label>
               <Textarea
                 id="query"
-                name="query"
                 placeholder="Type your question..."
                 className={cn(
-                  "h-18 resize-none border-slate-700 py-3 pl-4 pr-16 placeholder:text-slate-600 dark:border-slate-400 dark:placeholder:text-slate-400 xxs:h-12",
+                  "h-18 xxs:h-12 resize-none border-slate-700 py-3 pl-4 pr-16 placeholder:text-slate-600 dark:border-slate-400 dark:placeholder:text-slate-400",
                   "flex w-full grow flex-col rounded-md border bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:bg-zinc-800 dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]",
                   formState.errors.query && "border-red-500"
                 )}
