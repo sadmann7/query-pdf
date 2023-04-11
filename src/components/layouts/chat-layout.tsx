@@ -1,9 +1,8 @@
 import * as React from "react"
 import { useMounted } from "@/hooks/use-mouted"
 import { useChatStore } from "@/stores/chat"
-import { Config } from "@/types"
 
-import { chatConfig } from "@/config/chat"
+import { chatConfig, type ChatConfig } from "@/config/chat"
 import { Icons } from "@/components/icons"
 import Meta from "@/components/layouts/meta"
 import { SidebarNav } from "@/components/layouts/sidebar-nav"
@@ -22,7 +21,7 @@ export function ChatLayout({ children }: LayoutProps) {
   // create chat layout config
   const { chats } = useChatStore()
 
-  const chatLayoutConfig: Config = {
+  const chatLayoutConfig: ChatConfig = {
     mainNav: chatConfig.mainNav,
     sidebarNav: [
       ...chatConfig.sidebarNav,
@@ -41,12 +40,10 @@ export function ChatLayout({ children }: LayoutProps) {
         <div className="flex h-full w-full overflow-hidden">
           <div className="flex h-screen max-w-full flex-1 flex-col">
             <SiteHeader config={chatLayoutConfig} />
-            <main className="relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden md:container md:grid md:grid-cols-[220px_minmax(0,1fr)] md:items-start lg:grid-cols-[240px_minmax(0,1fr)]">
+            <main className="relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden md:container md:grid md:grid-cols-[220px_minmax(0,1fr)] md:items-start md:pl-6 md:pr-0 lg:grid-cols-[240px_minmax(0,1fr)]">
               <aside className="fixed top-0 z-30 hidden h-full w-full shrink-0 overflow-y-auto border-r border-r-slate-400 dark:border-r-slate-600 md:sticky md:block md:pt-7 lg:pt-0">
                 <ScrollArea className="h-full pr-6 lg:py-7">
-                  <div role="presentation" className="container">
-                    <SidebarNav items={chatLayoutConfig.sidebarNav} />
-                  </div>
+                  <SidebarNav items={chatLayoutConfig.sidebarNav} />
                 </ScrollArea>
               </aside>
               {children}

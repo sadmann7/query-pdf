@@ -1,8 +1,15 @@
-import type { Config } from "@/types"
-
+import type { NavItem, SidebarNavItem } from "@/types/nav"
 import { Icons } from "@/components/icons"
 
-export const chatConfig: Config = {
+export interface ChatConfig {
+  name?: string
+  description?: string
+  links?: Record<string, string>
+  mainNav: NavItem[]
+  sidebarNav?: SidebarNavItem[]
+}
+
+export const chatConfig = {
   mainNav: [
     {
       title: "Chats",
