@@ -8,10 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { nanoid } from "nanoid"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { toast } from "react-hot-toast"
-import { z } from "zod"
+import { Schema, z } from "zod"
 
 import { Layout } from "@/components/layouts/layout"
+import { Button } from "@/components/ui/button"
 import FileInput from "@/components/ui/form/file-input"
+import { Input } from "@/components/ui/input"
 
 const schema = z
   .object({
