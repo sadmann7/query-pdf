@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import type { Config } from "@/types/"
+import type { GlobalConfig } from "@/types/"
 import { siteConfig } from "@/config/site"
 import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/layouts/main-nav"
@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/components/layouts/theme-toggle"
 import { buttonVariants } from "@/components/ui/button"
 
 interface SiteHeaderProps {
-  config: Config
+  config: GlobalConfig
 }
 
 export function SiteHeader({ config }: SiteHeaderProps) {

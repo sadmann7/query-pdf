@@ -8,12 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { nanoid } from "nanoid"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { toast } from "react-hot-toast"
-import { Schema, z } from "zod"
+import { z } from "zod"
 
 import { Layout } from "@/components/layouts/layout"
-import { Button } from "@/components/ui/button"
 import FileInput from "@/components/ui/form/file-input"
-import { Input } from "@/components/ui/input"
 
 const schema = z
   .object({
@@ -94,7 +92,7 @@ const Home: NextPageWithLayout = () => {
     [chatStore]
   )
 
-  //  auto submit form when file is selected
+  // auto submit form when file is selected
   useEffect(() => {
     const subscription = watch(() => handleSubmit(onSubmit)())
     return () => subscription.unsubscribe()

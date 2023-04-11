@@ -1,13 +1,16 @@
-import type { AppProps } from "next/app"
-import { Inter as FontSans } from "@next/font/google"
+import "@/styles/globals.css"
+import type { ReactElement, ReactNode } from "react"
+import type { NextPage } from "next"
+import type { AppProps, AppType } from "next/app"
+import { Inter as FontSans } from "next/font/google"
+import Head from "next/head"
+import { api } from "@/utils/api"
+import { type Session } from "next-auth"
+import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "next-themes"
 
 import { Layout } from "@/components/layouts/layout"
-import ToastWrapper from "@/components/ui/toast-wrapper"
 import "@/styles/globals.css"
-import { ReactElement, type ReactNode } from "react"
-import type { NextPage } from "next"
-import Head from "next/head"
 
 export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
   P,
@@ -16,7 +19,9 @@ export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
   getLayout?: (page: ReactElement) => ReactNode
 }
 
-type AppPropsWithLayout = AppProps & {
+type AppPropsWithLayout = AppProps<{
+  session: Session | null
+}> & {
   Component: NextPageWithLayout
 }
 
@@ -26,7 +31,10 @@ const fontSans = FontSans({
   display: "swap",
 })
 
-export default function App({ Component, pageProps }: AppPropsWithLayout) {
+const MyApp: AppType<{ session: Session | null }> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>)
 
   return (
@@ -37,12 +45,15 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         }
       `}</style>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <Head>
-          <title>Chat with PDF</title>
-        </Head>
-        {getLayout(<Component {...pageProps} />)}
-        <ToastWrapper />
+        <SessionProvider session={session}>
+          <Head>
+            <title>Chat with PDF</title>
+          </Head>
+          {getLayout(<Component {...pageProps} />)}
+        </SessionProvider>
       </ThemeProvider>
     </>
   )
 }
+
+export default api.withTRPC(MyApp)
