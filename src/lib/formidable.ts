@@ -19,12 +19,12 @@ export const formidablePromise = (
 }
 
 export const fileConsumer = (
-  file: formidable.file,
+  file: formidable.File,
   endBuffers: {
     [filename: string]: Buffer
   }
 ) => {
-  const chunks = []
+  const chunks: Buffer[] = []
 
   const writable = new Writable({
     write: (chunk, _enc, next) => {

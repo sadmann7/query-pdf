@@ -29,6 +29,7 @@
     "@trpc/next": "^10.18.0",
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
+    "@types/formidable": "^2.0.5",
     "@vercel/og": "^0.5.1",
     "class-variance-authority": "^0.5.1",
     "clsx": "^1.2.1",
