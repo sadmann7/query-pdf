@@ -4,11 +4,11 @@ import type { NextPage } from "next"
 import type { AppProps, AppType } from "next/app"
 import { Inter as FontSans } from "next/font/google"
 import Head from "next/head"
-import { api } from "@/utils/api"
 import { type Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "next-themes"
 
+import { api } from "@/lib/api"
 import { Layout } from "@/components/layouts/layout"
 import "@/styles/globals.css"
 

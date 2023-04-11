@@ -10,7 +10,7 @@ import {
 } from "langchain/document_loaders"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
 
-export const splitDocumentsFromFile = async (file) => {
+export const splitDocumentsFromFile = async (file: any) => {
   const { fileText, fileName } = file
 
   const textSplitter = new RecursiveCharacterTextSplitter({

@@ -48,6 +48,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    role          USER_ROLE @default(USER)
 }
 
 model VerificationToken {
@@ -56,4 +57,9 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+enum USER_ROLE {
+    ADMIN
+    USER
 }
