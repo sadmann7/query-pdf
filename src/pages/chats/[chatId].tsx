@@ -9,7 +9,6 @@ import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { Send, X } from "lucide-react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { toast } from "react-hot-toast"
-import { ReactMarkdown } from "react-markdown/lib/react-markdown"
 import { z } from "zod"
 
 import { cn } from "@/lib/utils"
@@ -176,9 +175,7 @@ const Chat: NextPageWithLayout = () => {
                   {isLoading && memoedMessages.length - 1 === i ? (
                     <LoadingDots color="#64748b" />
                   ) : (
-                    <ReactMarkdown linkTarget="_blank">
-                      {message.message}
-                    </ReactMarkdown>
+                    message.message
                   )}
                 </div>
               ) : (
@@ -186,9 +183,7 @@ const Chat: NextPageWithLayout = () => {
                   <div className="flex flex-col items-end gap-1.5">
                     <div className="flex items-center gap-2.5">
                       <div className="rounded-md border border-slate-300 bg-blue-500 px-2.5 py-1.5 text-sm text-slate-50 dark:border-slate-500 dark:bg-blue-600">
-                        <ReactMarkdown linkTarget="_blank">
-                          {message.message}
-                        </ReactMarkdown>
+                        {message.message}
                       </div>
                     </div>
                   </div>
