@@ -1,6 +1,6 @@
 import { CallbackManager } from "langchain/callbacks"
 import { ChatVectorDBQAChain, LLMChain, loadQAChain } from "langchain/chains"
-import { OpenAIChat } from "langchain/llms"
+import { OpenAIChat } from "langchain/llms/openai"
 import { PromptTemplate } from "langchain/prompts"
 import { PineconeStore } from "langchain/vectorstores"
 
@@ -23,7 +23,6 @@ Question: {question}
 =========
 Answer in Markdown:`
 )
-
 export const makeChain = (
   vectorstore: PineconeStore,
   onTokenStream?: (token: string) => void

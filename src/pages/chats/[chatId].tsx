@@ -226,6 +226,7 @@ const Chat: NextPageWithLayout = () => {
                   }
                 }}
                 {...register("query", { required: true })}
+                disabled={isLoading || pending?.includes("loading...")}
               />
               <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2">
                 {watch("query") && (
@@ -249,7 +250,7 @@ const Chat: NextPageWithLayout = () => {
                   aria-label="Chat"
                   variant="ghost"
                   className="h-auto rounded-full p-0.5 text-slate-500 dark:text-slate-500"
-                  disabled={isLoading}
+                  disabled={isLoading || pending?.includes("loading...")}
                 >
                   <Send className="h-5 w-5" aria-hidden="true" />
                 </Button>
