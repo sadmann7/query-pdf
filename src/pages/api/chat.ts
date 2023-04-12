@@ -13,7 +13,7 @@ interface ExtendedNextRequest extends NextRequest {
   json: () => Promise<{
     chatId: string
     question: string
-    chatHistory: string[]
+    history: string[]
   }>
 }
 
@@ -23,11 +23,11 @@ export const config: PageConfig = {
 
 export default async function handler(req: ExtendedNextRequest) {
   try {
-    const { chatId, question, chatHistory } = await req.json()
+    const { chatId, question, history } = await req.json()
     console.log({
       chatId,
       question,
-      chatHistory,
+      history,
     })
 
     if (!question) {
@@ -78,17 +78,21 @@ export default async function handler(req: ExtendedNextRequest) {
 
     // create chain
     const chain = makeChain(llm, vectorstore)
+    // const chain = ChatVectorDBQAChain.fromLLM(llm, vectorstore, {
+    //   returnSourceDocuments: false,
+    //   k: 2,
+    // })
 
     // We don't need to await the result of the chain.run() call because
     // the LLM will invoke the callbackManager's handleLLMEnd() method
     chain
       .call({
         question: sanitizedQuestion,
-        chat_history: chatHistory ?? [],
+        chat_history: history ?? [],
       })
       .catch(console.error)
 
-    return new NextResponse(stream.readable, {
+    return new Response(stream.readable, {
       headers: {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",

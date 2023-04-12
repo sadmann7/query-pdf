@@ -31,7 +31,9 @@ const Chat: NextPageWithLayout = () => {
   // chat store
   const { chats } = useChatStore()
 
+  const [query, setQuery] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isStreaming, setIsStreaming] = useState(false)
   const [messageState, setMessageState] = useState<MessageState>({
     messages: [
       {
@@ -46,13 +48,15 @@ const Chat: NextPageWithLayout = () => {
   const { messages, pending, history, pendingSourceDocs } = messageState
 
   // react-hook-form
-  const { register, handleSubmit, formState, watch, reset } = useForm<Inputs>({
-    resolver: zodResolver(schema),
-  })
+  const { register, handleSubmit, formState, watch, reset, setFocus } =
+    useForm<Inputs>({
+      resolver: zodResolver(schema),
+    })
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data)
 
     const question = data.query.trim()
+    setQuery(question)
 
     setMessageState((state) => ({
       ...state,
@@ -85,21 +89,11 @@ const Chat: NextPageWithLayout = () => {
         }),
         signal: ctrl.signal,
         onmessage: (event) => {
+          console.log(event)
           setIsLoading(false)
+          setIsStreaming(true)
           if (event.data === "[DONE]") {
             // end the stream
-            setMessageState((state) => ({
-              history: [...state.history, [question, state.pending ?? ""]],
-              messages: [
-                ...state.messages,
-                {
-                  type: "bot",
-                  message: state.pending ?? "",
-                },
-              ],
-              pending: undefined,
-              pendingSourceDocs: undefined,
-            }))
             ctrl.abort()
           } else {
             // stream the messages
@@ -107,6 +101,7 @@ const Chat: NextPageWithLayout = () => {
               ...state,
               pending: (state.pending ?? "") + event.data,
             }))
+            event.data.length === 0 && setIsStreaming(false)
           }
         },
       })
@@ -117,6 +112,25 @@ const Chat: NextPageWithLayout = () => {
         : toast.error("Something went wrong, please try again")
     }
   }
+
+  // update messages if pending is not undefined
+  useEffect(() => {
+    if (!isStreaming && pending && query) {
+      setMessageState((state) => ({
+        ...state,
+        history: [...state.history, [query, state.pending ?? ""]],
+        messages: [
+          ...state.messages,
+          {
+            type: "bot",
+            message: state.pending ?? "",
+          },
+        ],
+        pending: undefined,
+        pendingSourceDocs: undefined,
+      }))
+    }
+  }, [isStreaming, pending, pendingSourceDocs, query, watch])
 
   // memoize the messages if pending is not undefined
   const memoedMessages = useMemo(() => {
@@ -144,6 +158,11 @@ const Chat: NextPageWithLayout = () => {
       inline: "nearest",
     })
   }, [memoedMessages])
+
+  // auto focus on textarea
+  useEffect(() => {
+    setFocus("query")
+  }, [setFocus, isStreaming])
 
   console.log({
     isLoading,

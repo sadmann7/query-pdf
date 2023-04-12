@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse, PageConfig } from "next"
 import type { IngestResponse } from "@/types"
 import formidable from "formidable"
 import { Document } from "langchain/document"
-import { OpenAIEmbeddings } from "langchain/embeddings"
+import { OpenAIEmbeddings } from "langchain/embeddings/openai"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
 import { PineconeStore } from "langchain/vectorstores"
 

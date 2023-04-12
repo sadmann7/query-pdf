@@ -36,6 +36,6 @@ export const makeChain = (llm: ChatOpenAI, vectorstore: PineconeStore) => {
     combineDocumentsChain: docChain,
     questionGeneratorChain: questionGenerator,
     returnSourceDocuments: false,
-    // k: 2, //number of source documents to return
+    k: 2, //number of source documents to return
   })
 }
