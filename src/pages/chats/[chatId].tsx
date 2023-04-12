@@ -89,7 +89,6 @@ const Chat: NextPageWithLayout = () => {
         }),
         signal: ctrl.signal,
         onmessage: (event) => {
-          console.log(event)
           setIsLoading(false)
           setIsStreaming(true)
           if (event.data === "[DONE]") {
@@ -134,6 +133,23 @@ const Chat: NextPageWithLayout = () => {
 
   // memoize the messages if pending is not undefined
   const memoedMessages = useMemo(() => {
+    // add loading message if isLoading is true and remove it if it's false
+    if (isLoading) {
+      return [
+        ...messages,
+        {
+          type: "bot",
+          message: "Loading...",
+        },
+      ]
+    } else {
+      const loadingMessageIndex = messages.findIndex(
+        (message) => message.message === "Loading..."
+      )
+      if (loadingMessageIndex !== -1) {
+        messages.splice(loadingMessageIndex, 1)
+      }
+    }
     if (pending) {
       return [
         ...messages,
@@ -145,7 +161,7 @@ const Chat: NextPageWithLayout = () => {
       ]
     }
     return messages
-  }, [messages, pending, pendingSourceDocs]) satisfies Message[]
+  }, [isLoading, messages, pending, pendingSourceDocs]) satisfies Message[]
 
   // scroll to bottom of chat
   const endMessageRef = useRef<HTMLDivElement>(null)
@@ -189,7 +205,7 @@ const Chat: NextPageWithLayout = () => {
                   key={i}
                   className="my-4 w-fit rounded-md border border-slate-300 bg-zinc-200/25 px-2.5 py-1.5 text-sm text-slate-950 dark:border-slate-500 dark:bg-zinc-700/75 dark:text-slate-50"
                 >
-                  {isLoading && memoedMessages.length - 1 === i ? (
+                  {isLoading && message.message === "Loading..." ? (
                     <LoadingDots color="#64748b" />
                   ) : (
                     <ReactMarkdown linkTarget="_blank">
@@ -243,7 +259,7 @@ const Chat: NextPageWithLayout = () => {
                   }
                 }}
                 {...register("query", { required: true })}
-                disabled={isLoading || pending?.includes("loading...")}
+                disabled={isLoading || isStreaming}
               />
               <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2">
                 {watch("query") && (
@@ -267,9 +283,9 @@ const Chat: NextPageWithLayout = () => {
                   aria-label="Chat"
                   variant="ghost"
                   className="h-auto rounded-full p-0.5 text-slate-500 dark:text-slate-500"
-                  disabled={isLoading || pending?.includes("loading...")}
+                  disabled={isLoading || isStreaming}
                 >
-                  <Send className="h-5 w-5" aria-hidden="true" />
+                  <Send className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
             </fieldset>

@@ -88,7 +88,7 @@ export default async function handler(req: ExtendedNextRequest) {
     chain
       .call({
         question: sanitizedQuestion,
-        chat_history: history ?? [],
+        chat_history: [],
       })
       .catch(console.error)
 
